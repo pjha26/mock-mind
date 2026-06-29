@@ -28,20 +28,25 @@ export function useVapi() {
   }, []);
 
   const startInterview = useCallback(async (interviewType: string, jobRole: string) => {
-    // Start the Vapi call with an assistant configured to hit our Next.js backend
-    await vapi.start({
-      name: 'Mock Interviewer',
-      model: {
-        provider: 'custom-llm',
-        url: `${window.location.origin}/api/chat`,
-        model: 'langgraph-engine',
-        messages: [{ role: 'system', content: `You are a mock interviewer conducting a ${interviewType} interview for a ${jobRole}.` }],
-      },
-      voice: {
-        provider: '11labs',
-        voiceId: 'bIHbv24MWmeRgasZH58o', // standard professional voice
-      },
-    });
+    try {
+      // Start the Vapi call with an assistant configured to hit our Next.js backend
+      await vapi.start({
+        name: 'Mock Interviewer',
+        model: {
+          provider: 'custom-llm',
+          url: `${window.location.origin}/api/chat`,
+          model: 'langgraph-engine',
+          messages: [{ role: 'system', content: `You are a mock interviewer conducting a ${interviewType} interview for a ${jobRole}.` }],
+        },
+        voice: {
+          provider: '11labs',
+          voiceId: 'bIHbv24MWmeRgasZH58o', // standard professional voice
+        },
+      });
+    } catch (error) {
+      console.error('Failed to start Vapi interview:', error);
+      alert('Failed to connect to the voice assistant. Check the console for details.');
+    }
   }, []);
 
   const stopInterview = useCallback(() => {
