@@ -86,11 +86,11 @@ export default function FeedbackPage() {
               <div 
                 key={metric.label} 
                 className={`glass-card p-6 rounded-xl border border-outline-variant/30 flex flex-col gap-4 animate-fadeUp`}
-                style={{ animationDelay: \`\${200 + index * 100}ms\` }}
+                style={{ animationDelay: `${200 + index * 100}ms` }}
               >
                 <div className="flex justify-between items-center">
                   <div className="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center">
-                    <Icon className={\`w-5 h-5 \${metric.color}\`} />
+                    <Icon className={`w-5 h-5 ${metric.color}`} />
                   </div>
                   <span className="text-2xl font-bold">{metric.score}</span>
                 </div>
@@ -98,8 +98,8 @@ export default function FeedbackPage() {
                   <h3 className="font-title-md text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-2">{metric.label}</h3>
                   <div className="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
                     <div 
-                      className={\`h-full bg-current \${metric.color}\`} 
-                      style={{ width: \`\${metric.score}%\` }}
+                      className={`h-full bg-current ${metric.color}`} 
+                      style={{ width: `${metric.score}%` }}
                     />
                   </div>
                 </div>
