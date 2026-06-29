@@ -59,8 +59,8 @@ export default function SetupPage() {
                   onClick={() => setSelectedType(type.id)}
                   className={`glass-card rounded-xl p-8 flex flex-col items-center justify-center gap-4 text-center group focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:ring-offset-2 focus:ring-offset-background transition-all duration-300 ${
                     isActive 
-                      ? 'border-[#3b82f6] shadow-[0_0_20px_rgba(59,130,246,0.2)] bg-[#3b82f6]/5 transform -translate-y-1' 
-                      : 'border-outline-variant hover:border-[#3b82f6]/50'
+                      ? 'border-blue-500 shadow-[0_0_24px_rgba(59,130,246,0.25)] bg-blue-500/5 transform -translate-y-1' 
+                      : 'border-outline-variant hover:border-zinc-600'
                   }`}
                   aria-label={`Select ${type.id} interview`}
                 >
@@ -70,7 +70,7 @@ export default function SetupPage() {
                     <Icon className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className="font-title-md text-title-md font-bold text-on-surface mb-2 uppercase tracking-wide">{type.id}</h3>
+                    <h3 className="font-bold text-on-surface mb-2 uppercase tracking-widest text-sm">{type.id}</h3>
                     <p className="font-body-sm text-sm text-on-surface-variant leading-relaxed">{type.description}</p>
                   </div>
                 </button>
@@ -79,7 +79,7 @@ export default function SetupPage() {
           </div>
 
           {/* Configuration Section */}
-          <div className="glass-card rounded-xl p-8 space-y-8 mt-4 border border-outline-variant">
+          <div className="glass-card rounded-xl p-8 space-y-8 border border-outline-variant">
             {/* Role Selection */}
             <div className="space-y-4">
               <label className="block font-title-md text-title-md text-on-surface font-semibold" htmlFor="role-select">
@@ -113,7 +113,8 @@ export default function SetupPage() {
               <div className="px-2 pt-2">
                 <input
                   aria-label="Difficulty level"
-                  className="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-[#3b82f6]"
+                  className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+                  style={{ background: `linear-gradient(to right, #3b82f6 ${(difficulty - 1) * 50}%, #27272a ${(difficulty - 1) * 50}%)` }}
                   max={3}
                   min={1}
                   type="range"

@@ -11,24 +11,22 @@ export default function Home() {
       {/* Main Content Canvas */}
       <main className="flex-grow flex flex-col relative pt-16">
         {/* Hero Section */}
-        <section className="relative min-h-[921px] flex items-center justify-center overflow-hidden px-margin-mobile md:px-margin-desktop">
-          {/* Shader Background Placeholder */}
-          <div className="absolute inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none">
-            <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-[#0a0a0a] via-[#0d1a30] to-[#0a0a0a]" />
-          </div>
+        <section className="relative min-h-[calc(100vh-64px)] flex items-center justify-center overflow-hidden px-margin-mobile md:px-margin-desktop">
+          {/* Radial Background */}
+          <div className="absolute inset-0 z-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 70% 50%, rgba(59,130,246,0.08) 0%, transparent 60%)' }} />
 
           <div className="relative z-10 max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-12 w-full">
             {/* Hero Content */}
             <div className="flex-1 flex flex-col items-start gap-8 py-20 md:py-0">
-              <h1 className="font-display-lg text-5xl md:text-6xl font-bold text-on-surface tracking-tight leading-tight">
+              <h1 className="font-display-lg text-5xl md:text-6xl font-bold text-on-surface tracking-tight leading-tight animate-fadeUp">
                 Master the Art of the Interview.
               </h1>
-              <p className="font-body-lg text-body-lg text-on-surface-variant max-w-xl text-lg md:text-xl">
+              <p className="font-body-lg text-body-lg text-on-surface-variant max-w-xl text-lg md:text-xl animate-fadeUp delay-100">
                 Practice high-stakes conversations with an AI that feels human. Refine your narrative, overcome anxiety, and land your next role.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full sm:w-auto animate-fadeUp delay-200">
                 <Link href="/setup">
-                  <button className="bg-[#3b82f6] text-white px-8 py-4 rounded-lg font-title-md text-title-md transition-all duration-300 hover:scale-[1.02] hover:glow-blue flex items-center justify-center gap-3 group w-full sm:w-auto shadow-lg shadow-blue-500/20">
+                  <button className="bg-[#3b82f6] text-white px-8 py-4 rounded-lg font-title-md text-title-md transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] active:scale-95 flex items-center justify-center gap-3 group w-full sm:w-auto shadow-lg shadow-blue-500/20">
                     Start Practicing
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
@@ -36,7 +34,7 @@ export default function Home() {
               </div>
               
               {/* Trust badges */}
-              <div className="flex items-center gap-6 mt-8 opacity-70">
+              <div className="flex items-center gap-6 mt-8 opacity-70 animate-fadeUp delay-300">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#3b82f6]" />
                   <span className="text-sm font-medium">Real-time voice AI</span>
@@ -49,12 +47,12 @@ export default function Home() {
             </div>
 
             {/* Hero Visual (AI Orb) */}
-            <div className="flex-1 w-full max-w-md relative aspect-square flex items-center justify-center">
+            <div className="flex-1 w-full max-w-md relative aspect-square flex items-center justify-center animate-fadeUp delay-200">
               <div className="absolute inset-0 bg-[#3b82f6]/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '4s' }} />
               <div className="relative w-full h-full z-10 glass-panel rounded-full overflow-hidden flex items-center justify-center border-subtle">
-                {/* AI Orb Visual - Pulsing Animation */}
-                <div className="w-3/4 h-3/4 rounded-full bg-gradient-to-br from-[#3b82f6]/30 to-[#3b82f6]/5 border border-[#3b82f6]/30 flex items-center justify-center mic-pulse">
-                  <div className="w-1/2 h-1/2 rounded-full bg-[#3b82f6]/20 mic-active-inner" />
+                {/* AI Orb Visual - Breathing Animation */}
+                <div className="w-3/4 h-3/4 rounded-full bg-gradient-to-br from-[#3b82f6]/30 to-[#3b82f6]/5 border border-[#3b82f6]/30 flex items-center justify-center animate-breathe">
+                  <div className="w-1/2 h-1/2 rounded-full bg-[#3b82f6]/20" />
                 </div>
               </div>
             </div>

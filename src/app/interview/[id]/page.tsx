@@ -2,11 +2,13 @@
 
 import { useVapi } from '@/features/interview/use-vapi';
 import { useRouter } from 'next/navigation';
-import { Briefcase, Mic, AudioLines, PhoneOff } from 'lucide-react';
+import { Briefcase, Mic, MicOff, PhoneOff } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function InterviewRoom({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const { isSessionActive, isSpeaking, startInterview, stopInterview } = useVapi();
+  const { isSessionActive, isSpeaking, activeTranscript, startInterview, stopInterview } = useVapi();
+  const [questionProgress, setQuestionProgress] = useState(3); // Mocking question 3 of 8
 
   const handleStart = () => {
     startInterview('Behavioral', 'Software Engineer');
@@ -14,35 +16,40 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
 
   const handleEnd = () => {
     stopInterview();
-    router.push('/dashboard');
+    router.push('/feedback');
   };
 
-  // 3 Distinct Orb States
+  // 3 Distinct Orb States matching user request
   const getOrbStyles = () => {
     if (!isSessionActive) {
-      // Idle: Slow pulse
-      return 'w-64 h-64 rounded-full bg-gradient-to-br from-[#3b82f6]/10 to-transparent border border-[#3b82f6]/20 transition-all duration-1000 animate-[pulse_4s_ease-in-out_infinite]';
+      // Idle: slow breathing pulse, dim blue glow
+      return 'w-64 h-64 rounded-full bg-[#3b82f6]/5 border border-[#3b82f6]/20 shadow-[0_0_20px_rgba(59,130,246,0.1)] animate-breathe';
     }
     if (isSpeaking) {
-      // AI Speaking: Wave animation, color shift to purple/cyan
-      return 'w-64 h-64 rounded-full bg-gradient-to-br from-purple-500/30 via-[#3b82f6]/30 to-cyan-500/30 border border-purple-500/50 scale-125 shadow-[0_0_60px_rgba(168,85,247,0.4)] transition-all duration-700 animate-[pulse_1.5s_ease-in-out_infinite]';
+      // AI Speaking: wave pulse, orb gently throbs, glow color shifts slightly warmer
+      return 'w-64 h-64 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-purple-500/40 shadow-[0_0_50px_rgba(168,85,247,0.3)] animate-[pulse_1.5s_ease-in-out_infinite] scale-105 transition-all duration-700';
     }
-    // Listening: Fast ripple, intense blue glow
-    return 'w-64 h-64 rounded-full bg-gradient-to-br from-[#3b82f6]/40 to-[#3b82f6]/10 border border-[#3b82f6]/50 scale-110 shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300 animate-[pulse_1s_ease-in-out_infinite]';
+    // Listening: fast ripple rings, bright blue glow intensifies
+    return 'w-64 h-64 rounded-full bg-[#3b82f6]/20 border border-[#3b82f6]/50 shadow-[0_0_40px_rgba(59,130,246,0.5)] animate-[ping_0.8s_cubic-bezier(0,0,0.2,1)_infinite] transition-all duration-300';
   };
 
   const getInnerOrbStyles = () => {
-    if (!isSessionActive) {
-      return 'w-32 h-32 rounded-full bg-[#3b82f6]/10 transition-all duration-1000';
-    }
-    if (isSpeaking) {
-      return 'w-40 h-40 rounded-full bg-gradient-to-r from-purple-500/40 to-cyan-500/40 transition-all duration-700';
-    }
-    return 'w-32 h-32 rounded-full bg-[#3b82f6]/30 shadow-[0_0_20px_rgba(59,130,246,0.8)] transition-all duration-300 animate-pulse';
+    if (!isSessionActive) return 'w-32 h-32 rounded-full bg-[#3b82f6]/10';
+    if (isSpeaking) return 'w-36 h-36 rounded-full bg-gradient-to-br from-indigo-500/40 to-purple-500/40 animate-pulse';
+    return 'w-32 h-32 rounded-full bg-[#3b82f6]/40 shadow-[0_0_20px_rgba(59,130,246,0.8)]';
   };
 
   return (
     <div className="bg-background text-on-surface min-h-screen flex flex-col overflow-hidden relative selection:bg-primary-container selection:text-on-primary-container font-body-lg text-body-lg">
+      
+      {/* Absolute Top Progress Bar */}
+      <div className="absolute top-0 left-0 w-full h-0.5 bg-zinc-800 z-50">
+        <div 
+          className="h-full bg-blue-500 transition-all duration-500"
+          style={{ width: `${(questionProgress / 8) * 100}%` }}
+        />
+      </div>
+
       {/* Background Layer with enhanced depth */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div
@@ -58,56 +65,80 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
       </div>
 
       {/* Main Content Canvas */}
-      <main className="flex-grow relative z-10 flex flex-col justify-between items-center p-margin-mobile md:p-margin-desktop w-full max-w-[1200px] mx-auto h-screen">
+      <main className="flex-grow relative z-10 flex flex-col justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-[1200px] mx-auto h-screen pt-4 pb-8">
+        
         {/* Top Status Bar */}
-        <header className="w-full flex justify-between items-center bg-surface-container-lowest/40 backdrop-blur-xl border border-outline-variant/30 rounded-xl px-6 py-4 shadow-lg shadow-black/20">
+        <header className="w-full flex justify-between items-center bg-transparent mt-2 px-2">
           <div className="flex items-center gap-3 text-secondary">
-            <Briefcase className="w-6 h-6 text-[#3b82f6]" />
-            <span className="font-title-md text-title-md font-semibold tracking-wider uppercase text-on-surface">
-              Session: Behavioral
+            <Briefcase className="w-5 h-5 text-[#3b82f6]" />
+            <span className="font-title-md text-sm font-semibold tracking-wider uppercase text-on-surface">
+              Behavioral
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="font-title-md text-title-md font-medium text-on-surface-variant">Question 3 of 8</span>
+            <span className="font-title-md text-xs font-medium text-on-surface-variant uppercase tracking-widest">Question {questionProgress} of 8</span>
             {/* Live Green Indicator */}
             <div className="relative flex items-center justify-center">
-              {isSessionActive && <div className="absolute w-4 h-4 rounded-full bg-green-500/40 animate-ping" />}
-              <div className={`w-2.5 h-2.5 rounded-full z-10 ${isSessionActive ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-surface-container-highest'}`} />
+              {isSessionActive && <div className="absolute w-3 h-3 rounded-full bg-green-500/40 animate-ping" />}
+              <div className={`w-2 h-2 rounded-full z-10 ${isSessionActive ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-zinc-700'}`} />
             </div>
           </div>
         </header>
 
-        {/* AI Orb Centerpiece */}
-        <div className="flex-grow flex items-center justify-center w-full relative max-w-md mx-auto my-12 perspective-1000">
-          <div className="absolute inset-0 flex items-center justify-center mix-blend-screen scale-125">
-            <div className="w-full h-full flex items-center justify-center">
+        {/* AI Orb Centerpiece & Waveform */}
+        <div className="flex-grow flex flex-col items-center justify-center w-full relative max-w-md mx-auto my-12 perspective-1000">
+          <div className="absolute inset-0 flex flex-col items-center justify-center mix-blend-screen scale-125">
+            <div className="w-full flex flex-col items-center justify-center gap-8">
               <div className={`${getOrbStyles()} flex items-center justify-center`}>
                 <div className={`${getInnerOrbStyles()}`} />
+              </div>
+              
+              {/* AI Speaking Waveform (5 bars) */}
+              <div className="h-12 flex items-center gap-2">
+                {isSpeaking ? (
+                  <>
+                    <div className="w-1 rounded-full bg-blue-400 animate-bounce" style={{ height: '40%', animationDelay: '0ms' }} />
+                    <div className="w-1 rounded-full bg-blue-400 animate-bounce" style={{ height: '80%', animationDelay: '150ms' }} />
+                    <div className="w-1 rounded-full bg-blue-400 animate-bounce" style={{ height: '100%', animationDelay: '300ms' }} />
+                    <div className="w-1 rounded-full bg-blue-400 animate-bounce" style={{ height: '70%', animationDelay: '150ms' }} />
+                    <div className="w-1 rounded-full bg-blue-400 animate-bounce" style={{ height: '50%', animationDelay: '0ms' }} />
+                  </>
+                ) : (
+                  <div className="h-12 w-full opacity-0" />
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Controls Area */}
-        <div className="w-full flex flex-col items-center gap-8 mt-auto pb-8">
+        {/* Controls Area (Transcript + Buttons) */}
+        <div className="w-full flex flex-col items-center gap-6 mt-auto">
+          
+          {/* Live Transcript Strip */}
+          <div className={`h-12 flex items-center justify-center transition-all duration-500 ${isSessionActive && (activeTranscript || isSpeaking) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <p className="text-zinc-400 text-sm italic text-center max-w-lg px-4">
+              {isSpeaking ? "AI is responding..." : activeTranscript}
+            </p>
+          </div>
+
           {/* Mic Button */}
           <div className="relative flex items-center justify-center group">
-            {isSessionActive && !isSpeaking && <div className="absolute inset-0 rounded-full bg-[#3b82f6]/20 animate-ping pointer-events-none" />}
+            {isSessionActive && !isSpeaking && <div className="absolute inset-0 rounded-full bg-[#3b82f6]/30 animate-ping pointer-events-none" />}
             <button
               onClick={isSessionActive ? undefined : handleStart}
-              className={`px-12 py-6 rounded-full flex items-center gap-4 justify-center shadow-lg transition-all duration-300 z-20 focus:outline-none focus:ring-4 focus:ring-primary/50 ${
+              className={`px-10 py-5 rounded-full flex items-center gap-3 justify-center shadow-lg transition-all duration-300 z-20 focus:outline-none focus:ring-2 focus:ring-primary/50 active:scale-95 ${
                 isSessionActive 
-                  ? 'bg-surface-container-highest/50 backdrop-blur-md text-[#3b82f6] border border-[#3b82f6]/30 cursor-default' 
-                  : 'bg-[#3b82f6] hover:bg-blue-600 hover:text-white text-white hover:scale-105 cursor-pointer shadow-blue-500/20 hover:shadow-blue-500/40'
+                  ? 'bg-[#3b82f6] text-white cursor-default shadow-[0_0_20px_rgba(59,130,246,0.5)]' 
+                  : 'bg-transparent border border-zinc-700 text-zinc-300 hover:border-zinc-500 hover:text-white cursor-pointer hover:bg-zinc-800/50'
               }`}
               aria-label={isSessionActive ? 'Microphone active' : 'Start recording'}
             >
               {isSessionActive ? (
-                <AudioLines className="w-8 h-8 animate-pulse text-[#3b82f6]" />
+                <MicOff className="w-6 h-6 text-white" />
               ) : (
-                <Mic className="w-8 h-8" />
+                <Mic className="w-6 h-6" />
               )}
-              <span className="font-title-lg text-title-lg font-bold tracking-wide">
+              <span className="font-title-md text-sm font-bold tracking-widest uppercase">
                 {isSessionActive ? 'LISTENING...' : 'TAP TO BEGIN'}
               </span>
             </button>
@@ -116,10 +147,10 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
           {/* End Session Action */}
           <button
             onClick={handleEnd}
-            className="mt-4 px-8 py-3 rounded-lg border border-outline-variant/50 text-on-surface-variant hover:text-error hover:border-error/50 hover:bg-error/10 transition-colors duration-200 font-title-md text-title-md font-medium flex items-center gap-2 group"
+            className="px-6 py-2 rounded-full text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 font-title-sm text-xs font-medium flex items-center gap-2 group uppercase tracking-widest"
             aria-label="End interview session"
           >
-            <PhoneOff className="w-5 h-5 group-hover:animate-pulse" />
+            <PhoneOff className="w-4 h-4 group-hover:scale-110 transition-transform" />
             End Session
           </button>
         </div>

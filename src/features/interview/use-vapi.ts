@@ -10,6 +10,7 @@ export function useVapi() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState<{ role: string; text: string }[]>([]);
+  const [activeTranscript, setActiveTranscript] = useState<string>('');
 
   useEffect(() => {
     // Log the key just to confirm it's loading properly (first 5 chars)
@@ -25,8 +26,15 @@ export function useVapi() {
     vapi.on('speech-end', () => setIsSpeaking(false));
     
     vapi.on('message', (message: any) => {
-      if (message.type === 'transcript' && message.transcriptType === 'final') {
-        setTranscript(prev => [...prev, { role: message.role, text: message.transcript }]);
+      if (message.type === 'transcript') {
+        if (message.transcriptType === 'partial' && message.role === 'user') {
+          setActiveTranscript(message.transcript);
+        } else if (message.transcriptType === 'final') {
+          setTranscript(prev => [...prev, { role: message.role, text: message.transcript }]);
+          if (message.role === 'user') {
+            setActiveTranscript('');
+          }
+        }
       }
     });
 
@@ -83,6 +91,7 @@ export function useVapi() {
     isSessionActive,
     isSpeaking,
     transcript,
+    activeTranscript,
     startInterview,
     stopInterview,
   };
