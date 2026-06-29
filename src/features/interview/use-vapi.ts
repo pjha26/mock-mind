@@ -34,7 +34,7 @@ export function useVapi() {
         name: 'Mock Interviewer',
         model: {
           provider: 'custom-llm',
-          url: `${window.location.origin}/api/chat`,
+          url: `https://hydrocodone-appliances-financing-research.trycloudflare.com/api/chat`,
           model: 'langgraph-engine',
           messages: [{ role: 'system', content: `You are a mock interviewer conducting a ${interviewType} interview for a ${jobRole}.` }],
         },

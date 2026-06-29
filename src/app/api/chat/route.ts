@@ -58,6 +58,6 @@ export async function POST(req: Request) {
 
   } catch (error) {
     logger.error('Error in chat API route', { error });
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: error.message, stack: error.stack }, { status: 500 });
   }
 }
