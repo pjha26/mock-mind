@@ -4,21 +4,22 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import TopNavBar from '@/components/top-nav-bar';
 import Footer from '@/components/footer';
+import { Brain, Network, LineChart, ChevronDown, Rocket } from 'lucide-react';
 
 const INTERVIEW_TYPES = [
   {
     id: 'Behavioral',
-    icon: 'psychology',
+    icon: Brain,
     description: 'Leadership, conflict resolution, and past experiences.',
   },
   {
     id: 'Technical',
-    icon: 'architecture',
+    icon: Network,
     description: 'System design and architecture principles.',
   },
   {
     id: 'Case Study',
-    icon: 'analytics',
+    icon: LineChart,
     description: 'Product sense, metrics, and strategic thinking.',
   },
 ];
@@ -40,10 +41,10 @@ export default function SetupPage() {
       <TopNavBar activeLink="practice" />
 
       {/* Main Content Canvas */}
-      <main className="flex-grow pt-24 pb-20 px-margin-mobile md:px-margin-desktop w-full max-w-[1200px] mx-auto flex flex-col items-center justify-center min-h-[calc(100vh-160px)]">
-        <div className="w-full max-w-3xl space-y-12">
-          <div className="text-center space-y-4">
-            <h1 className="font-display-lg text-display-lg text-on-surface">Choose your challenge.</h1>
+      <main className="flex-grow pt-24 pb-20 px-margin-mobile md:px-margin-desktop w-full max-w-[1200px] mx-auto flex flex-col items-center justify-center">
+        <div className="w-full max-w-3xl space-y-8">
+          <div className="text-center space-y-4 mb-8">
+            <h1 className="font-display-lg text-4xl md:text-5xl font-bold text-on-surface">Choose your challenge.</h1>
             <p className="font-body-lg text-body-lg text-on-surface-variant">Configure your environment for the upcoming session.</p>
           </div>
 
@@ -51,28 +52,26 @@ export default function SetupPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {INTERVIEW_TYPES.map((type) => {
               const isActive = selectedType === type.id;
+              const Icon = type.icon;
               return (
                 <button
                   key={type.id}
                   onClick={() => setSelectedType(type.id)}
-                  className={`glass-card rounded-xl p-8 flex flex-col items-center justify-center gap-4 text-center group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background transition-all duration-300 ${
-                    isActive ? 'active-card' : ''
+                  className={`glass-card rounded-xl p-8 flex flex-col items-center justify-center gap-4 text-center group focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:ring-offset-2 focus:ring-offset-background transition-all duration-300 ${
+                    isActive 
+                      ? 'border-[#3b82f6] shadow-[0_0_20px_rgba(59,130,246,0.2)] bg-[#3b82f6]/5 transform -translate-y-1' 
+                      : 'border-outline-variant hover:border-[#3b82f6]/50'
                   }`}
                   aria-label={`Select ${type.id} interview`}
                 >
-                  <div className="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                    <span
-                      className={`material-symbols-outlined text-3xl transition-colors ${
-                        isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                      }`}
-                      style={isActive ? { fontVariationSettings: "'FILL' 1" } : undefined}
-                    >
-                      {type.icon}
-                    </span>
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
+                    isActive ? 'bg-[#3b82f6]/20 text-[#3b82f6]' : 'bg-surface-container-high text-on-surface-variant group-hover:text-[#3b82f6] group-hover:bg-[#3b82f6]/10'
+                  }`}>
+                    <Icon className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className="font-title-md text-title-md text-on-surface mb-2">{type.id}</h3>
-                    <p className="font-body-md text-body-md text-on-surface-variant">{type.description}</p>
+                    <h3 className="font-title-md text-title-md font-bold text-on-surface mb-2 uppercase tracking-wide">{type.id}</h3>
+                    <p className="font-body-sm text-sm text-on-surface-variant leading-relaxed">{type.description}</p>
                   </div>
                 </button>
               );
@@ -80,15 +79,15 @@ export default function SetupPage() {
           </div>
 
           {/* Configuration Section */}
-          <div className="glass-card rounded-xl p-8 space-y-8">
+          <div className="glass-card rounded-xl p-8 space-y-8 mt-4 border border-outline-variant">
             {/* Role Selection */}
             <div className="space-y-4">
-              <label className="block font-title-md text-title-md text-on-surface" htmlFor="role-select">
+              <label className="block font-title-md text-title-md text-on-surface font-semibold" htmlFor="role-select">
                 Target Role
               </label>
               <div className="relative">
                 <select
-                  className="w-full bg-surface-container-lowest border border-outline-variant text-on-surface font-body-lg text-body-lg rounded-lg py-4 px-4 appearance-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  className="w-full bg-surface-container-lowest border border-outline-variant text-on-surface font-body-lg text-body-lg rounded-lg py-4 px-4 appearance-none focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition-colors cursor-pointer"
                   id="role-select"
                   aria-label="Select target role"
                 >
@@ -98,7 +97,7 @@ export default function SetupPage() {
                   <option value="ds">Data Scientist</option>
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-on-surface-variant">
-                  <span className="material-symbols-outlined">expand_more</span>
+                  <ChevronDown className="w-5 h-5 text-on-surface-variant" />
                 </div>
               </div>
             </div>
@@ -106,22 +105,22 @@ export default function SetupPage() {
             {/* Difficulty Slider */}
             <div className="space-y-6">
               <div className="flex justify-between items-center">
-                <label className="block font-title-md text-title-md text-on-surface">Difficulty Level</label>
-                <span className="font-label-sm text-label-sm text-primary px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+                <label className="block font-title-md text-title-md text-on-surface font-semibold">Difficulty Level</label>
+                <span className="font-label-sm text-label-sm font-bold text-[#3b82f6] px-3 py-1 rounded-full bg-[#3b82f6]/10 border border-[#3b82f6]/20">
                   {DIFFICULTY_DISPLAY[difficulty - 1]}
                 </span>
               </div>
-              <div className="px-2">
+              <div className="px-2 pt-2">
                 <input
                   aria-label="Difficulty level"
-                  className="w-full"
+                  className="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-[#3b82f6]"
                   max={3}
                   min={1}
                   type="range"
                   value={difficulty}
                   onChange={(e) => setDifficulty(Number(e.target.value))}
                 />
-                <div className="flex justify-between mt-3 font-label-sm text-label-sm text-on-surface-variant">
+                <div className="flex justify-between mt-3 font-label-sm text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                   {DIFFICULTY_LABELS.map((label) => (
                     <span key={label}>{label}</span>
                   ))}
@@ -131,13 +130,13 @@ export default function SetupPage() {
           </div>
 
           {/* CTA */}
-          <div className="flex justify-center pt-8 border-t border-outline-variant/30">
+          <div className="flex justify-center pt-8">
             <button
               onClick={handleLaunch}
-              className="glow-button bg-[#3b82f6] text-white font-title-md text-title-md py-4 px-12 rounded-lg flex items-center gap-3"
+              className="bg-[#3b82f6] text-white font-title-md text-lg font-bold py-4 px-12 rounded-lg flex items-center gap-3 transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-blue-500/20"
             >
               Launch Interview
-              <span className="material-symbols-outlined text-xl">rocket_launch</span>
+              <Rocket className="w-5 h-5" />
             </button>
           </div>
         </div>

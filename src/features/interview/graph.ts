@@ -21,13 +21,13 @@ export const InterviewStateAnnotation = Annotation.Root({
 // 2. Models
 const evaluationModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama3-70b-8192',
+  model: 'llama-3.3-70b-versatile',
   temperature: 0.1,
 });
 
 const generationModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama3-70b-8192',
+  model: 'llama-3.3-70b-versatile',
   temperature: 0.7,
 });
 
