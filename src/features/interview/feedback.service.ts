@@ -1,13 +1,13 @@
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { StructuredOutputParser } from 'langchain/output_parsers';
+import { StructuredOutputParser } from '@langchain/core/output_parsers';
 import { z } from 'zod';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 import prisma from '../../lib/prisma';
 import logger from '../../utils/logger';
 
 const feedbackModel = new ChatGoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  modelName: 'gemini-1.5-pro',
+  apiKey: process.env.GEMINI_API_KEY || 'dummy_key',
+  model: 'gemini-1.5-pro',
   temperature: 0.2,
 });
 

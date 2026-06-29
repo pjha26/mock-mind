@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Plus, Clock, FileText } from 'lucide-react';
 
 export default async function DashboardPage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   
   let userId = 'demo-user-id'; // Fallback for testing UI without login
@@ -51,7 +51,7 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastInterviews.map((interview) => (
+              {pastInterviews.map((interview: any) => (
                 <div key={interview.id} className="p-6 border border-neutral-800 rounded-2xl bg-neutral-900 hover:border-emerald-500/50 transition-colors cursor-pointer group">
                   <div className="flex justify-between items-start mb-4">
                     <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-sm font-medium rounded-full">

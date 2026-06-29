@@ -35,7 +35,7 @@ export function useVapi() {
         provider: 'custom-llm',
         url: `${window.location.origin}/api/chat`,
         model: 'langgraph-engine',
-        systemPrompt: `You are a mock interviewer conducting a ${interviewType} interview for a ${jobRole}.`,
+        messages: [{ role: 'system', content: `You are a mock interviewer conducting a ${interviewType} interview for a ${jobRole}.` }],
       },
       voice: {
         provider: '11labs',

@@ -1,7 +1,7 @@
 import { StateGraph, Annotation, MessagesAnnotation } from '@langchain/langgraph';
 import { ChatGroq } from '@langchain/groq';
 import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages';
-import { StructuredOutputParser } from 'langchain/output_parsers';
+import { StructuredOutputParser } from '@langchain/core/output_parsers';
 import { z } from 'zod';
 import logger from '../../utils/logger';
 
@@ -20,14 +20,14 @@ export const InterviewStateAnnotation = Annotation.Root({
 
 // 2. Models
 const evaluationModel = new ChatGroq({
-  apiKey: process.env.GROQ_API_KEY,
-  modelName: 'llama3-70b-8192',
+  apiKey: process.env.GROQ_API_KEY || 'dummy_key',
+  model: 'llama3-70b-8192',
   temperature: 0.1,
 });
 
 const generationModel = new ChatGroq({
-  apiKey: process.env.GROQ_API_KEY,
-  modelName: 'llama3-70b-8192',
+  apiKey: process.env.GROQ_API_KEY || 'dummy_key',
+  model: 'llama3-70b-8192',
   temperature: 0.7,
 });
 
