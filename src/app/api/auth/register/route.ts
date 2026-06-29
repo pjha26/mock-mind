@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createUser, findUserByEmail, hashPassword } from '../../../../features/auth/auth.service';

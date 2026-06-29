@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { findUserByEmail, comparePassword } from '../../../../features/auth/auth.service';
 import { signToken } from '../../../../utils/jwt';
