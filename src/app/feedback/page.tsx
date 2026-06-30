@@ -6,6 +6,8 @@ import Footer from '@/components/footer';
 import { RotateCcw, Target, Zap, MessageSquare, TrendingUp, AlertTriangle, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
+import { Suspense } from 'react';
+
 interface FeedbackData {
   overallScore: number;
   communication: number;
@@ -16,7 +18,7 @@ interface FeedbackData {
   detailedFeedback: string;
 }
 
-export default function FeedbackPage() {
+function FeedbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const interviewId = searchParams.get('id');
@@ -251,5 +253,13 @@ export default function FeedbackPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function FeedbackPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center text-zinc-500">Loading...</div>}>
+      <FeedbackContent />
+    </Suspense>
   );
 }

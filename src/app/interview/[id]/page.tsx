@@ -3,7 +3,7 @@
 import { useVapi } from '@/features/interview/use-vapi';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Briefcase, Mic, MicOff, PhoneOff } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function InterviewRoom({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
