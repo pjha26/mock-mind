@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { interviewGraph } from '../../../features/interview/graph';
+import { interviewGraph } from '../../../../features/interview/graph';
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
 
 export async function POST(req: Request) {
