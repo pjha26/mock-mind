@@ -30,10 +30,11 @@ const DIFFICULTY_DISPLAY = ['Entry', 'Intermediate', 'Advanced'];
 export default function SetupPage() {
   const router = useRouter();
   const [selectedType, setSelectedType] = useState<string>('Behavioral');
+  const [role, setRole] = useState<string>('Frontend Engineer');
   const [difficulty, setDifficulty] = useState<number>(2);
 
   const handleLaunch = () => {
-    router.push(`/interview/demo-id`);
+    router.push(`/interview/demo-id?type=${selectedType}&role=${role}`);
   };
 
   return (
@@ -90,11 +91,13 @@ export default function SetupPage() {
                   className="w-full bg-surface-container-lowest border border-outline-variant text-on-surface font-body-lg text-body-lg rounded-lg py-4 px-4 appearance-none focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition-colors cursor-pointer"
                   id="role-select"
                   aria-label="Select target role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
                 >
-                  <option value="pm">Senior Product Manager</option>
-                  <option value="fe">Frontend Engineer</option>
-                  <option value="be">Backend Engineer</option>
-                  <option value="ds">Data Scientist</option>
+                  <option value="Senior Product Manager">Senior Product Manager</option>
+                  <option value="Frontend Engineer">Frontend Engineer</option>
+                  <option value="Backend Engineer">Backend Engineer</option>
+                  <option value="Data Scientist">Data Scientist</option>
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-on-surface-variant">
                   <ChevronDown className="w-5 h-5 text-on-surface-variant" />

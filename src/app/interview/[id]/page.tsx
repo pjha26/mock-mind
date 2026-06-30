@@ -1,17 +1,22 @@
 'use client';
 
 import { useVapi } from '@/features/interview/use-vapi';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Briefcase, Mic, MicOff, PhoneOff } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function InterviewRoom({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const { isSessionActive, isSpeaking, activeTranscript, startInterview, stopInterview } = useVapi();
-  const [questionProgress, setQuestionProgress] = useState(3); // Mocking question 3 of 8
+  const searchParams = useSearchParams();
+  
+  const interviewType = searchParams.get('type') || 'Behavioral';
+  const jobRole = searchParams.get('role') || 'Frontend Engineer';
+  const totalQuestions = interviewType.toLowerCase() === 'technical' ? 5 : 8;
+
+  const { isSessionActive, isSpeaking, activeTranscript, currentQuestionIndex, startInterview, stopInterview } = useVapi();
 
   const handleStart = () => {
-    startInterview('Behavioral', 'Software Engineer');
+    startInterview(interviewType, jobRole);
   };
 
   const handleEnd = () => {
@@ -46,7 +51,7 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
       <div className="absolute top-0 left-0 w-full h-0.5 bg-zinc-800 z-50">
         <div 
           className="h-full bg-blue-500 transition-all duration-500"
-          style={{ width: `${(questionProgress / 8) * 100}%` }}
+          style={{ width: `${(Math.min(currentQuestionIndex + 1, totalQuestions) / totalQuestions) * 100}%` }}
         />
       </div>
 
@@ -72,11 +77,13 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
           <div className="flex items-center gap-3 text-secondary">
             <Briefcase className="w-5 h-5 text-[#3b82f6]" />
             <span className="font-title-md text-sm font-semibold tracking-wider uppercase text-on-surface">
-              Behavioral
+              {interviewType}
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="font-title-md text-xs font-medium text-on-surface-variant uppercase tracking-widest">Question {questionProgress} of 8</span>
+            <span className="font-title-md text-xs font-medium text-on-surface-variant uppercase tracking-widest">
+              Question {Math.min(currentQuestionIndex + 1, totalQuestions)} of {totalQuestions}
+            </span>
             {/* Live Green Indicator */}
             <div className="relative flex items-center justify-center">
               {isSessionActive && <div className="absolute w-3 h-3 rounded-full bg-green-500/40 animate-ping" />}

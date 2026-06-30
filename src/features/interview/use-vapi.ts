@@ -11,6 +11,7 @@ export function useVapi() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState<{ role: string; text: string }[]>([]);
   const [activeTranscript, setActiveTranscript] = useState<string>('');
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   useEffect(() => {
     // Log the key just to confirm it's loading properly (first 5 chars)
@@ -20,7 +21,12 @@ export function useVapi() {
       console.error('CRITICAL: NEXT_PUBLIC_VAPI_PUBLIC_KEY is missing from .env!');
     }
 
-    vapi.on('call-start', () => setIsSessionActive(true));
+    vapi.on('call-start', () => {
+      console.log('Vapi call-start event fired. Session active.');
+      setIsSessionActive(true);
+      setCurrentQuestionIndex(0); // Reset on start
+    });
+    
     vapi.on('call-end', () => setIsSessionActive(false));
     vapi.on('speech-start', () => setIsSpeaking(true));
     vapi.on('speech-end', () => setIsSpeaking(false));
@@ -33,6 +39,8 @@ export function useVapi() {
           setTranscript(prev => [...prev, { role: message.role, text: message.transcript }]);
           if (message.role === 'user') {
             setActiveTranscript('');
+          } else if (message.role === 'assistant') {
+            setCurrentQuestionIndex(prev => prev + 1);
           }
         }
       }
@@ -40,13 +48,7 @@ export function useVapi() {
 
     // Deep error destructuring so empty errors don't swallow the real message
     vapi.on('error', (error) => {
-      console.error(
-        'Vapi error:', 
-        JSON.stringify(error), 
-        Object.keys(error), 
-        error?.message, 
-        error?.error
-      );
+      console.error('Vapi error:', JSON.stringify(error, null, 2));
     });
 
     return () => {
@@ -66,7 +68,6 @@ export function useVapi() {
       }
 
       // 2. Start Vapi using a pre-configured Dashboard Assistant ID instead of a fragile inline config
-      // NOTE: You must add NEXT_PUBLIC_VAPI_ASSISTANT_ID to your .env file!
       const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
       
       if (!assistantId) {
@@ -75,7 +76,13 @@ export function useVapi() {
         return;
       }
 
-      await vapi.start(assistantId);
+      console.log(`Starting Vapi with assistant ID: ${assistantId}, type: ${interviewType}, role: ${jobRole}`);
+      await vapi.start(assistantId, {
+        variableValues: {
+          interviewType: interviewType,
+          jobRole: jobRole
+        }
+      });
       
     } catch (error) {
       console.error('Failed to start Vapi interview:', error);
@@ -92,6 +99,7 @@ export function useVapi() {
     isSpeaking,
     transcript,
     activeTranscript,
+    currentQuestionIndex,
     startInterview,
     stopInterview,
   };
