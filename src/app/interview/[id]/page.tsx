@@ -13,9 +13,30 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
   const jobRole = searchParams.get('role') || 'Frontend Engineer';
   const totalQuestions = interviewType.toLowerCase() === 'technical' ? 5 : 6;
 
-  const { isSessionActive, isSpeaking, activeTranscript, currentQuestionIndex, startInterview, stopInterview, getTranscript } = useVapi();
+  const { isSessionActive, isSpeaking, activeTranscript, currentQuestionIndex, timeLeft, startInterview, stopInterview, getTranscript } = useVapi();
   const [interviewId, setInterviewId] = useState<string | null>(null);
   const [isEnding, setIsEnding] = useState(false);
+
+  // Auto-end when timer hits zero
+  useEffect(() => {
+    if (isSessionActive && timeLeft === 0 && !isEnding) {
+      console.log('Timer hit zero, auto-ending session.');
+      handleEnd();
+    }
+  }, [timeLeft, isSessionActive, isEnding]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const getTimerColor = () => {
+    if (!isSessionActive) return 'text-zinc-500';
+    if (timeLeft <= 10) return 'text-red-500 animate-pulse font-bold';
+    if (timeLeft <= 60) return 'text-amber-500 font-bold';
+    return 'text-zinc-300';
+  };
 
   const handleStart = async () => {
     try {
@@ -39,6 +60,7 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
   };
 
   const handleEnd = async () => {
+    if (isEnding) return;
     setIsEnding(true);
     stopInterview();
 
@@ -121,8 +143,14 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
               {interviewType}
             </span>
           </div>
+          
+          {/* Timer Display */}
+          <div className={`font-mono text-xl tracking-widest transition-colors duration-300 ${getTimerColor()}`}>
+            {formatTime(timeLeft)}
+          </div>
+
           <div className="flex items-center gap-4">
-            <span className="font-title-md text-xs font-medium text-on-surface-variant uppercase tracking-widest">
+            <span className="font-title-md text-xs font-medium text-on-surface-variant uppercase tracking-widest hidden md:inline-block">
               Question {Math.min(currentQuestionIndex + 1, totalQuestions)} of {totalQuestions}
             </span>
             {/* Live Green Indicator */}

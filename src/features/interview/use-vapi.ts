@@ -17,8 +17,31 @@ export function useVapi() {
   // Use a ref for the transcript so we can always access the latest value in callbacks
   const transcriptRef = useRef<{ role: string; text: string }[]>([]);
 
+  const [timeLeft, setTimeLeft] = useState<number>(570); // 9 minutes 30 seconds
+
   useEffect(() => {
-    // Log the key just to confirm it's loading properly (first 5 chars)
+    let timerInterval: NodeJS.Timeout;
+
+    if (isSessionActive) {
+      timerInterval = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            clearInterval(timerInterval);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      setTimeLeft(570);
+    }
+
+    return () => {
+      if (timerInterval) clearInterval(timerInterval);
+    };
+  }, [isSessionActive]);
+
+  useEffect(() => {
     if (process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY) {
       console.log('Vapi Public Key Loaded:', process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY.substring(0, 5) + '...');
     } else {
@@ -29,6 +52,7 @@ export function useVapi() {
       console.log('Vapi call-start event fired. Session active.');
       setIsSessionActive(true);
       setCurrentQuestionIndex(0);
+      setTimeLeft(570);
     });
     
     vapi.on('call-end', () => {
@@ -140,6 +164,7 @@ export function useVapi() {
     transcript,
     activeTranscript,
     currentQuestionIndex,
+    timeLeft,
     startInterview,
     stopInterview,
     getTranscript,

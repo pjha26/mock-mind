@@ -52,22 +52,24 @@ export default async function DashboardPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {pastInterviews.map((interview: any) => (
-                <div key={interview.id} className="p-6 border border-neutral-800 rounded-2xl bg-neutral-900 hover:border-emerald-500/50 transition-colors cursor-pointer group">
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-sm font-medium rounded-full">
-                      {interview.type}
-                    </span>
-                    <span className="text-sm text-neutral-500">
-                      {new Date(interview.createdAt).toLocaleDateString()}
-                    </span>
+                <Link href={`/feedback?id=${interview.id}`} key={interview.id}>
+                  <div className="p-6 border border-neutral-800 rounded-2xl bg-neutral-900 hover:border-emerald-500/50 transition-colors cursor-pointer group h-full flex flex-col">
+                    <div className="flex justify-between items-start mb-4">
+                      <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-sm font-medium rounded-full">
+                        {interview.type}
+                      </span>
+                      <span className="text-sm text-neutral-500">
+                        {new Date(interview.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <h3 className="font-semibold mb-2 group-hover:text-emerald-400 transition-colors">
+                      View Feedback Report
+                    </h3>
+                    <p className="text-sm text-neutral-400 mt-auto">
+                      Status: {interview.status}
+                    </p>
                   </div>
-                  <h3 className="font-semibold mb-2 group-hover:text-emerald-400 transition-colors">
-                    View Feedback Report
-                  </h3>
-                  <p className="text-sm text-neutral-400">
-                    Status: {interview.status}
-                  </p>
-                </div>
+                </Link>
               ))}
             </div>
           )}
