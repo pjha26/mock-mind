@@ -2,7 +2,7 @@ import TopNavBar from '@/components/top-nav-bar';
 import Footer from '@/components/footer';
 import ScoreRing from './score-ring';
 
-export default function ReportPage({ params }: { params: { id: string } }) {
+export default function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   // In production, fetch from DB using params.id
   const feedback = {
     overallScore: 84,
