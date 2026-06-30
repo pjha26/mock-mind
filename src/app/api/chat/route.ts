@@ -36,15 +36,23 @@ export async function POST(req: Request) {
       evaluationNote: '',
     };
 
-    console.time('llm-response-time');
-    const finalState = await interviewGraph.invoke(initialState);
-    console.timeEnd('llm-response-time');
-    const finalMessage = finalState.messages[finalState.messages.length - 1];
+    let finalMessage = null;
 
-    // Logging our final output to verify before streaming
-    console.log('=== OUTGOING RESPONSE TO VAPI ===');
-    console.log('Response:', finalMessage.content);
-    console.log('---------------------------------');
+    console.time('llm-response-time');
+    try {
+      const finalState = await interviewGraph.invoke(initialState);
+      finalMessage = finalState.messages[finalState.messages.length - 1];
+      console.log('=== OUTGOING RESPONSE TO VAPI ===');
+      console.log('Response:', finalMessage.content);
+      console.log('---------------------------------');
+    } catch (llmError: any) {
+      console.error('=== LLM INVOCATION FAILED ===');
+      console.error(llmError);
+      console.error('-----------------------------');
+      // Provide a fallback message so Vapi doesn't crash completely
+      finalMessage = { content: "I'm sorry, I encountered a temporary technical issue. Could you please repeat that?" };
+    }
+    console.timeEnd('llm-response-time');
 
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
