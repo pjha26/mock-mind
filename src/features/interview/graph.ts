@@ -180,6 +180,14 @@ Keep it conversational, empathetic, and natural. Do not use markdown formatting.
 You've covered all the major topics and the candidate has performed reasonably well.
 Say something like: "I think I have everything I need. That concludes our interview. You covered some solid ground today, particularly on [mention a specific strong area]. We'll be in touch soon."
 Keep it conversational and natural. Do not use markdown formatting.`;
+  } else if (state.messages.length <= 1) {
+    // Very first message opening
+    prompt = `You are an expert AI Interviewer starting a ${state.interviewType} interview for a ${state.jobRole} position.
+CRITICAL RULES:
+1. Greet the candidate, explicitly mention the ${state.jobRole} role.
+2. Briefly outline what the interview will cover based on these topics: ${remainingTopics.slice(0, 3).join(', ')}.
+3. Ask exactly ONE opening question to get started. Do not ask multiple questions.
+Keep it conversational and natural (2-4 sentences max). Do not use markdown formatting.`;
   } else {
     prompt = `You are an expert AI Interviewer conducting a ${state.interviewType} interview for a ${state.jobRole} position.
 Your current strategy is: ${state.currentStrategy}.
@@ -189,12 +197,13 @@ TOPICS ALREADY COVERED (DO NOT revisit these): ${state.topicsCovered.length > 0 
 TOPICS REMAINING to cover: ${remainingTopics.join(', ')}.
 
 CRITICAL RULES:
-- If strategy is 'probe_deeper', ask ONE clarifying follow-up about the SAME topic to give them a chance to demonstrate depth.
-- If strategy is 'challenge_assumption', push back politely on a weak point, then prepare to move on.
-- If strategy is 'next_question', briefly acknowledge their answer (1 sentence max), then ask about one of the REMAINING topics. Pick the most natural next topic from the remaining list.
-- NEVER ask about a topic that is already in the COVERED list.
-- Keep your response conversational, concise (2-4 sentences max), and sound like a real human interviewer. Do not use markdown formatting.
-- Do not tell the candidate how many topics are left or that you are tracking topics.`;
+1. Ask exactly ONE question at a time. NEVER ask multiple questions in a single response.
+2. If strategy is 'probe_deeper', ask ONE clarifying follow-up about the SAME topic to give them a chance to demonstrate depth.
+3. If strategy is 'challenge_assumption', push back politely on a weak point, then prepare to move on.
+4. If strategy is 'next_question', briefly acknowledge their answer (1 sentence max), then ask ONE question about one of the REMAINING topics. Pick the most natural next topic from the remaining list.
+5. NEVER ask about a topic that is already in the COVERED list.
+Keep your response conversational, concise (2-4 sentences max), and sound like a real human interviewer. Do not use markdown formatting.
+Do not tell the candidate how many topics are left or that you are tracking topics.`;
   }
 
   const response = await generationModel.invoke([

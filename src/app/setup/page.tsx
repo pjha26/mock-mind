@@ -58,13 +58,18 @@ export default function SetupPage() {
                 <button
                   key={type.id}
                   onClick={() => setSelectedType(type.id)}
-                  className={`glass-card rounded-xl p-8 flex flex-col items-center justify-center gap-4 text-center group focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:ring-offset-2 focus:ring-offset-background transition-all duration-300 ${
+                  className={`glass-card rounded-xl p-8 flex flex-col items-center justify-center gap-4 text-center group cursor-pointer transition-all duration-300 relative overflow-hidden ${
                     isActive 
-                      ? 'border-blue-500 shadow-[0_0_24px_rgba(59,130,246,0.25)] bg-blue-500/5 transform -translate-y-1' 
-                      : 'border-outline-variant hover:border-zinc-600'
+                      ? 'border-2 border-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.3)] bg-blue-500/10 transform -translate-y-1' 
+                      : 'border border-outline-variant hover:border-zinc-500 hover:bg-zinc-800/30'
                   }`}
                   aria-label={`Select ${type.id} interview`}
                 >
+                  {/* Selected Indicator Dot */}
+                  {isActive && (
+                    <div className="absolute top-4 right-4 w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)] animate-pulse" />
+                  )}
+                  
                   <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
                     isActive ? 'bg-[#3b82f6]/20 text-[#3b82f6]' : 'bg-surface-container-high text-on-surface-variant group-hover:text-[#3b82f6] group-hover:bg-[#3b82f6]/10'
                   }`}>
@@ -133,11 +138,11 @@ export default function SetupPage() {
             </div>
           </div>
 
-          {/* CTA */}
-          <div className="flex justify-center pt-8">
+          {/* CTA - Now Sticky at Bottom */}
+          <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background via-background/95 to-transparent backdrop-blur-sm flex justify-center z-50">
             <button
               onClick={handleLaunch}
-              className="bg-[#3b82f6] text-white font-title-md text-lg font-bold py-4 px-12 rounded-lg flex items-center gap-3 transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-blue-500/20"
+              className="bg-[#3b82f6] text-white font-title-md text-lg font-bold py-4 px-16 rounded-full flex items-center gap-3 transition-all duration-300 hover:scale-[1.02] shadow-[0_0_40px_rgba(59,130,246,0.4)] active:scale-95 border border-blue-400/50"
             >
               Launch Interview
               <Rocket className="w-5 h-5" />
@@ -146,7 +151,10 @@ export default function SetupPage() {
         </div>
       </main>
 
-      <Footer />
+      {/* Add padding to footer to account for sticky CTA */}
+      <div className="pb-24">
+        <Footer />
+      </div>
     </div>
   );
 }
