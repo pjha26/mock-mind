@@ -13,6 +13,8 @@ export function useVapi() {
   const [activeTranscript, setActiveTranscript] = useState<string>('');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
+  const [isStarting, setIsStarting] = useState(false);
+
   useEffect(() => {
     // Log the key just to confirm it's loading properly (first 5 chars)
     if (process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY) {
@@ -27,7 +29,10 @@ export function useVapi() {
       setCurrentQuestionIndex(0); // Reset on start
     });
     
-    vapi.on('call-end', () => setIsSessionActive(false));
+    vapi.on('call-end', () => {
+      setIsSessionActive(false);
+      setIsStarting(false);
+    });
     vapi.on('speech-start', () => setIsSpeaking(true));
     vapi.on('speech-end', () => setIsSpeaking(false));
     
@@ -49,6 +54,7 @@ export function useVapi() {
     // Deep error destructuring so empty errors don't swallow the real message
     vapi.on('error', (error) => {
       console.error('Vapi error:', JSON.stringify(error, null, 2));
+      setIsStarting(false);
     });
 
     return () => {
@@ -57,6 +63,12 @@ export function useVapi() {
   }, []);
 
   const startInterview = useCallback(async (interviewType: string, jobRole: string) => {
+    if (isSessionActive || isStarting) {
+      console.warn('Call already starting or active, ignoring duplicate trigger');
+      return;
+    }
+    
+    setIsStarting(true);
     try {
       // 1. Force microphone permissions first to prevent WebRTC rejection
       try {
@@ -87,8 +99,9 @@ export function useVapi() {
     } catch (error) {
       console.error('Failed to start Vapi interview:', error);
       alert('Failed to connect to the voice assistant. Check the console for details.');
+      setIsStarting(false);
     }
-  }, []);
+  }, [isSessionActive, isStarting]);
 
   const stopInterview = useCallback(() => {
     vapi.stop();
