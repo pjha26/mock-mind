@@ -9,8 +9,8 @@ export async function POST(req: Request) {
     const body = await req.json();
     
     // Logging what Vapi sends us to debug the pipeline
-    console.log('--- Incoming Vapi Request ---');
-    console.log(JSON.stringify(body, null, 2));
+    console.log('=== INCOMING REQUEST FROM VAPI ===');
+    console.log('Body:', JSON.stringify(body, null, 2));
     console.log('-----------------------------');
 
     const { messages } = body;
@@ -35,12 +35,14 @@ export async function POST(req: Request) {
       evaluationNote: '',
     };
 
+    console.time('llm-response-time');
     const finalState = await interviewGraph.invoke(initialState);
+    console.timeEnd('llm-response-time');
     const finalMessage = finalState.messages[finalState.messages.length - 1];
 
     // Logging our final output to verify before streaming
-    console.log('--- Outgoing Response to Vapi ---');
-    console.log(finalMessage.content);
+    console.log('=== OUTGOING RESPONSE TO VAPI ===');
+    console.log('Response:', finalMessage.content);
     console.log('---------------------------------');
 
     const encoder = new TextEncoder();
