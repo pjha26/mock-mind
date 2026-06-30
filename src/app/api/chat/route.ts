@@ -19,12 +19,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid messages array' }, { status: 400 });
     }
 
-    const langChainMessages = messages.map((m: any) => {
-      if (m.role === 'user') return new HumanMessage(m.content);
-      if (m.role === 'assistant') return new AIMessage(m.content);
-      if (m.role === 'system') return new SystemMessage(m.content);
-      return new HumanMessage(m.content);
-    });
+    const langChainMessages = messages
+      .filter((m: any) => m.role !== 'system') // 🔴 CRITICAL FIX: Strip Vapi's system prompt so we don't send multiple SystemMessages to Groq!
+      .map((m: any) => {
+        if (m.role === 'user') return new HumanMessage(m.content);
+        if (m.role === 'assistant') return new AIMessage(m.content);
+        return new HumanMessage(m.content);
+      });
 
     const initialState = {
       messages: langChainMessages,
