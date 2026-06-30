@@ -4,11 +4,32 @@ import { NextResponse } from 'next/server';
 import { interviewGraph } from '../../../../features/interview/graph';
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
 
+// Extract interview config from Vapi's system message before we strip it
+function extractConfigFromSystemMessage(messages: any[]): { interviewType: string; jobRole: string } {
+  const systemMsg = messages.find((m: any) => m.role === 'system');
+  let interviewType = 'Behavioral';
+  let jobRole = 'Software Engineer';
+
+  if (systemMsg?.content) {
+    const content = systemMsg.content as string;
+    
+    // Try to extract interview type (Technical, Behavioral, Case Study)
+    const typeMatch = content.match(/\b(Technical|Behavioral|Case Study)\b/i);
+    if (typeMatch) interviewType = typeMatch[1];
+
+    // Try to extract job role
+    const roleMatch = content.match(/(?:for a|for the|as a|as an)\s+(.+?)\s+(?:candidate|position|role|interview)/i);
+    if (roleMatch) jobRole = roleMatch[1];
+  }
+
+  console.log(`Extracted config — Type: ${interviewType}, Role: ${jobRole}`);
+  return { interviewType, jobRole };
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     
-    // Logging what Vapi sends us to debug the pipeline
     console.log('=== INCOMING REQUEST FROM VAPI ===');
     console.log('Body:', JSON.stringify(body, null, 2));
     console.log('-----------------------------');
@@ -19,8 +40,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid messages array' }, { status: 400 });
     }
 
+    // Extract interview config BEFORE filtering out system messages
+    const { interviewType, jobRole } = extractConfigFromSystemMessage(messages);
+
     const langChainMessages = messages
-      .filter((m: any) => m.role !== 'system') // 🔴 CRITICAL FIX: Strip Vapi's system prompt so we don't send multiple SystemMessages to Groq!
+      .filter((m: any) => m.role !== 'system')
       .map((m: any) => {
         if (m.role === 'user') return new HumanMessage(m.content);
         if (m.role === 'assistant') return new AIMessage(m.content);
@@ -29,14 +53,18 @@ export async function POST(req: Request) {
 
     const initialState = {
       messages: langChainMessages,
-      jobRole: 'Software Engineer',
-      interviewType: 'Behavioral', 
+      jobRole,
+      interviewType,
       difficulty: 1,
       currentStrategy: 'next_question',
       evaluationNote: '',
+      topicsCovered: [],
+      consecutiveWeakCount: 0,
+      shouldWrapUp: false,
+      currentTopicBeingDiscussed: '',
     };
 
-    let finalMessage = null;
+    let finalMessage: any = null;
 
     console.time('llm-response-time');
     try {
@@ -44,12 +72,13 @@ export async function POST(req: Request) {
       finalMessage = finalState.messages[finalState.messages.length - 1];
       console.log('=== OUTGOING RESPONSE TO VAPI ===');
       console.log('Response:', finalMessage.content);
+      console.log('Topics covered:', finalState.topicsCovered);
+      console.log('Strategy:', finalState.currentStrategy);
       console.log('---------------------------------');
     } catch (llmError: any) {
       console.error('=== LLM INVOCATION FAILED ===');
       console.error(llmError);
       console.error('-----------------------------');
-      // Provide a fallback message so Vapi doesn't crash completely
       finalMessage = { content: "I'm sorry, I encountered a temporary technical issue. Could you please repeat that?" };
     }
     console.timeEnd('llm-response-time');
@@ -57,37 +86,28 @@ export async function POST(req: Request) {
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       start(controller) {
-        // 1. Send initialization chunk with role
-        const initPayload = {
-          id: `chatcmpl-${Date.now()}`,
-          object: 'chat.completion.chunk',
-          created: Math.floor(Date.now() / 1000),
-          model: 'langgraph-engine',
-          choices: [{ index: 0, delta: { role: 'assistant', content: '' }, finish_reason: null }],
-        };
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(initPayload)}\n\n`));
+        const id = `chatcmpl-${Date.now()}`;
+        const created = Math.floor(Date.now() / 1000);
 
-        // 2. Send actual content chunk
-        const payload = {
-          id: `chatcmpl-${Date.now()}`,
-          object: 'chat.completion.chunk',
-          created: Math.floor(Date.now() / 1000),
-          model: 'langgraph-engine',
+        // 1. Init chunk
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+          id, object: 'chat.completion.chunk', created, model: 'langgraph-engine',
+          choices: [{ index: 0, delta: { role: 'assistant', content: '' }, finish_reason: null }],
+        })}\n\n`));
+
+        // 2. Content chunk
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+          id, object: 'chat.completion.chunk', created, model: 'langgraph-engine',
           choices: [{ index: 0, delta: { content: finalMessage.content }, finish_reason: null }],
-        };
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`));
+        })}\n\n`));
         
-        // 3. Send stop chunk
-        const stopPayload = {
-          id: `chatcmpl-${Date.now()}`,
-          object: 'chat.completion.chunk',
-          created: Math.floor(Date.now() / 1000),
-          model: 'langgraph-engine',
+        // 3. Stop chunk
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+          id, object: 'chat.completion.chunk', created, model: 'langgraph-engine',
           choices: [{ index: 0, delta: {}, finish_reason: 'stop' }],
-        };
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(stopPayload)}\n\n`));
+        })}\n\n`));
         
-        // 4. Close stream
+        // 4. Done
         controller.enqueue(encoder.encode('data: [DONE]\n\n'));
         controller.close();
       }

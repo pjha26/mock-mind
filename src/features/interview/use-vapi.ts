@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Vapi from '@vapi-ai/web';
 
 // Using the exact environment variable from your .env file
@@ -12,8 +12,10 @@ export function useVapi() {
   const [transcript, setTranscript] = useState<{ role: string; text: string }[]>([]);
   const [activeTranscript, setActiveTranscript] = useState<string>('');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
   const [isStarting, setIsStarting] = useState(false);
+
+  // Use a ref for the transcript so we can always access the latest value in callbacks
+  const transcriptRef = useRef<{ role: string; text: string }[]>([]);
 
   useEffect(() => {
     // Log the key just to confirm it's loading properly (first 5 chars)
@@ -26,10 +28,11 @@ export function useVapi() {
     vapi.on('call-start', () => {
       console.log('Vapi call-start event fired. Session active.');
       setIsSessionActive(true);
-      setCurrentQuestionIndex(0); // Reset on start
+      setCurrentQuestionIndex(0);
     });
     
     vapi.on('call-end', () => {
+      console.log('Vapi call-end event fired. Session ended.');
       setIsSessionActive(false);
       setIsStarting(false);
     });
@@ -41,7 +44,12 @@ export function useVapi() {
         if (message.transcriptType === 'partial' && message.role === 'user') {
           setActiveTranscript(message.transcript);
         } else if (message.transcriptType === 'final') {
-          setTranscript(prev => [...prev, { role: message.role, text: message.transcript }]);
+          const entry = { role: message.role, text: message.transcript };
+          setTranscript(prev => {
+            const updated = [...prev, entry];
+            transcriptRef.current = updated;
+            return updated;
+          });
           if (message.role === 'user') {
             setActiveTranscript('');
           } else if (message.role === 'assistant') {
@@ -69,22 +77,38 @@ export function useVapi() {
     }
     
     setIsStarting(true);
+
+    // Reset transcript for new session
+    setTranscript([]);
+    transcriptRef.current = [];
+
     try {
-      // 1. Force microphone permissions first to prevent WebRTC rejection
+      // 1. Warm up Vercel serverless function to avoid cold start timeout
+      try {
+        console.log('Warming up Vercel serverless function...');
+        await fetch('https://mock-mind-silk.vercel.app/api/health');
+        console.log('Warm-up complete.');
+      } catch (e) {
+        console.warn('Warm-up ping failed (non-critical):', e);
+      }
+
+      // 2. Force microphone permissions first to prevent WebRTC rejection
       try {
         await navigator.mediaDevices.getUserMedia({ audio: true });
       } catch (err) {
         console.error('Microphone permission denied or unavailable:', err);
         alert('Microphone access is required to start the interview.');
-        return; // Halt if no mic
+        setIsStarting(false);
+        return;
       }
 
-      // 2. Start Vapi using a pre-configured Dashboard Assistant ID instead of a fragile inline config
+      // 3. Start Vapi using a pre-configured Dashboard Assistant ID
       const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
       
       if (!assistantId) {
         console.error('NEXT_PUBLIC_VAPI_ASSISTANT_ID is not defined in .env!');
         alert('Please add your Assistant ID to the .env file.');
+        setIsStarting(false);
         return;
       }
 
@@ -107,6 +131,9 @@ export function useVapi() {
     vapi.stop();
   }, []);
 
+  // Expose the ref getter so callers can get the latest transcript at any time
+  const getTranscript = useCallback(() => transcriptRef.current, []);
+
   return {
     isSessionActive,
     isSpeaking,
@@ -115,5 +142,6 @@ export function useVapi() {
     currentQuestionIndex,
     startInterview,
     stopInterview,
+    getTranscript,
   };
 }

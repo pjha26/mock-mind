@@ -3,7 +3,7 @@
 import { useVapi } from '@/features/interview/use-vapi';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Briefcase, Mic, MicOff, PhoneOff } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function InterviewRoom({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -11,30 +11,71 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
   
   const interviewType = searchParams.get('type') || 'Behavioral';
   const jobRole = searchParams.get('role') || 'Frontend Engineer';
-  const totalQuestions = interviewType.toLowerCase() === 'technical' ? 5 : 8;
+  const totalQuestions = interviewType.toLowerCase() === 'technical' ? 5 : 6;
 
-  const { isSessionActive, isSpeaking, activeTranscript, currentQuestionIndex, startInterview, stopInterview } = useVapi();
+  const { isSessionActive, isSpeaking, activeTranscript, currentQuestionIndex, startInterview, stopInterview, getTranscript } = useVapi();
+  const [interviewId, setInterviewId] = useState<string | null>(null);
+  const [isEnding, setIsEnding] = useState(false);
 
-  const handleStart = () => {
+  const handleStart = async () => {
+    try {
+      // Create interview record in DB
+      const res = await fetch('/api/interviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: interviewType, role: jobRole }),
+      });
+      const data = await res.json();
+      if (data.interviewId) {
+        setInterviewId(data.interviewId);
+        console.log('Interview DB record created:', data.interviewId);
+      }
+    } catch (err) {
+      console.warn('Failed to create DB record (non-critical):', err);
+    }
+
+    // Start the Vapi session regardless of DB success
     startInterview(interviewType, jobRole);
   };
 
-  const handleEnd = () => {
+  const handleEnd = async () => {
+    setIsEnding(true);
     stopInterview();
-    router.push('/feedback');
+
+    const transcript = getTranscript();
+
+    // Save transcript to DB if we have an interview ID
+    if (interviewId && transcript.length > 0) {
+      try {
+        await fetch(`/api/interviews/${interviewId}/transcript`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript }),
+        });
+        console.log('Transcript saved to DB');
+      } catch (err) {
+        console.warn('Failed to save transcript to DB:', err);
+      }
+    }
+
+    // Navigate to feedback page with interview data
+    if (interviewId) {
+      router.push(`/feedback?id=${interviewId}`);
+    } else {
+      // Fallback: pass transcript via localStorage
+      localStorage.setItem('mockMindTranscript', JSON.stringify(transcript));
+      router.push('/feedback');
+    }
   };
 
   // 3 Distinct Orb States matching user request
   const getOrbStyles = () => {
     if (!isSessionActive) {
-      // Idle: slow breathing pulse, dim blue glow
       return 'w-64 h-64 rounded-full bg-[#3b82f6]/5 border border-[#3b82f6]/20 shadow-[0_0_20px_rgba(59,130,246,0.1)] animate-breathe';
     }
     if (isSpeaking) {
-      // AI Speaking: wave pulse, orb gently throbs, glow color shifts slightly warmer
       return 'w-64 h-64 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-purple-500/40 shadow-[0_0_50px_rgba(168,85,247,0.3)] animate-[pulse_1.5s_ease-in-out_infinite] scale-105 transition-all duration-700';
     }
-    // Listening: fast ripple rings, bright blue glow intensifies
     return 'w-64 h-64 rounded-full bg-[#3b82f6]/20 border border-[#3b82f6]/50 shadow-[0_0_40px_rgba(59,130,246,0.5)] animate-[ping_0.8s_cubic-bezier(0,0,0.2,1)_infinite] transition-all duration-300';
   };
 
@@ -154,11 +195,12 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
           {/* End Session Action */}
           <button
             onClick={handleEnd}
-            className="px-6 py-2 rounded-full text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 font-title-sm text-xs font-medium flex items-center gap-2 group uppercase tracking-widest"
+            disabled={isEnding}
+            className="px-6 py-2 rounded-full text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 font-title-sm text-xs font-medium flex items-center gap-2 group uppercase tracking-widest disabled:opacity-50"
             aria-label="End interview session"
           >
             <PhoneOff className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            End Session
+            {isEnding ? 'Saving...' : 'End Session'}
           </button>
         </div>
       </main>

@@ -5,6 +5,32 @@ import { StructuredOutputParser } from '@langchain/core/output_parsers';
 import { z } from 'zod';
 import logger from '../../utils/logger';
 
+// Topic pools per interview type
+const TOPIC_POOLS: Record<string, string[]> = {
+  behavioral: [
+    'Leadership & Initiative',
+    'Conflict Resolution',
+    'Teamwork & Collaboration',
+    'Handling Failure & Learning',
+    'Communication & Influence',
+    'Time Management & Prioritization',
+  ],
+  technical: [
+    'System Design & Architecture',
+    'Data Structures & Algorithms',
+    'API Design & Integration',
+    'Database Design & Optimization',
+    'Testing & Code Quality',
+  ],
+  'case study': [
+    'Product Sense & User Empathy',
+    'Metrics & KPIs',
+    'Market Analysis & Strategy',
+    'Prioritization Frameworks',
+    'Go-to-Market Strategy',
+  ],
+};
+
 // 1. Define State
 export const InterviewStateAnnotation = Annotation.Root({
   ...MessagesAnnotation.spec,
@@ -16,6 +42,22 @@ export const InterviewStateAnnotation = Annotation.Root({
   }),
   currentStrategy: Annotation<string>(),
   evaluationNote: Annotation<string>(),
+  topicsCovered: Annotation<string[]>({
+    reducer: (curr, next) => next,
+    default: () => [],
+  }),
+  consecutiveWeakCount: Annotation<number>({
+    reducer: (curr, next) => next,
+    default: () => 0,
+  }),
+  shouldWrapUp: Annotation<boolean>({
+    reducer: (curr, next) => next,
+    default: () => false,
+  }),
+  currentTopicBeingDiscussed: Annotation<string>({
+    reducer: (curr, next) => next,
+    default: () => '',
+  }),
 });
 
 // 2. Models
@@ -35,69 +77,125 @@ const generationModel = new ChatGroq({
 async function evaluateAnswerNode(state: typeof InterviewStateAnnotation.State) {
   logger.info('Running evaluateAnswerNode');
   
-  const lastMessage = state.messages[state.messages.length - 1];
-  
   const parser = StructuredOutputParser.fromZodSchema(
     z.object({
       evaluation: z.enum(['strong', 'weak', 'vague', 'incomplete', 'excellent']),
       reasoning: z.string(),
+      topicDiscussed: z.string().describe('The broad interview topic this exchange was about, e.g. "Leadership & Initiative" or "System Design & Architecture". Pick the closest match from the topic pool.'),
     })
   );
 
+  const topicPool = TOPIC_POOLS[state.interviewType.toLowerCase()] || TOPIC_POOLS['behavioral'];
+
   const prompt = `You are evaluating a candidate's answer in a ${state.interviewType} interview for the role of ${state.jobRole}.
 Evaluate the candidate's last answer based on depth, clarity, and relevance.
+Also identify which topic from this pool the answer was about: ${topicPool.join(', ')}.
 ${parser.getFormatInstructions()}`;
 
   const response = await evaluationModel.invoke([
     new SystemMessage(prompt),
-    ...state.messages.slice(-3) // Only look at recent context for evaluation
+    ...state.messages.slice(-4) // Recent context for evaluation
   ]);
 
   try {
     const parsed = await parser.parse(response.content as string);
     return {
       evaluationNote: parsed.evaluation,
+      currentTopicBeingDiscussed: parsed.topicDiscussed,
     };
   } catch (e) {
     logger.error('Failed to parse evaluation', { error: e });
-    return { evaluationNote: 'vague' }; // fallback
+    return { evaluationNote: 'vague', currentTopicBeingDiscussed: '' };
   }
 }
 
 async function strategizeNode(state: typeof InterviewStateAnnotation.State) {
   logger.info('Running strategizeNode');
   const evaluation = state.evaluationNote;
+  const topicPool = TOPIC_POOLS[state.interviewType.toLowerCase()] || TOPIC_POOLS['behavioral'];
   
   let newDifficulty = state.difficulty;
   let strategy = 'next_question';
+  let consecutiveWeakCount = state.consecutiveWeakCount;
+  let topicsCovered = [...state.topicsCovered];
+  let shouldWrapUp = false;
 
-  if (evaluation === 'vague' || evaluation === 'incomplete') {
+  // Track weak/vague streaks
+  if (evaluation === 'vague' || evaluation === 'incomplete' || evaluation === 'weak') {
+    consecutiveWeakCount += 1;
+  } else {
+    consecutiveWeakCount = 0; // Reset on any decent answer
+  }
+
+  // Add topic to covered list if it's a new topic
+  if (state.currentTopicBeingDiscussed && !topicsCovered.includes(state.currentTopicBeingDiscussed)) {
+    topicsCovered.push(state.currentTopicBeingDiscussed);
+  }
+
+  // Determine strategy
+  if (consecutiveWeakCount >= 4) {
+    // Candidate has been consistently weak — wrap up early
+    shouldWrapUp = true;
+    strategy = 'wrap_up_weak';
+  } else if (topicsCovered.length >= topicPool.length) {
+    // All topics covered — wrap up naturally
+    shouldWrapUp = true;
+    strategy = 'wrap_up_complete';
+  } else if (evaluation === 'vague' || evaluation === 'incomplete') {
     strategy = 'probe_deeper';
   } else if (evaluation === 'weak') {
     strategy = 'challenge_assumption';
   } else if (evaluation === 'excellent') {
     strategy = 'next_question';
     newDifficulty += 1;
+  } else {
+    // 'strong' — move on
+    strategy = 'next_question';
   }
 
   return {
     currentStrategy: strategy,
     difficulty: Math.min(newDifficulty, 5),
+    consecutiveWeakCount,
+    topicsCovered,
+    shouldWrapUp,
   };
 }
 
 async function generateQuestionNode(state: typeof InterviewStateAnnotation.State) {
   logger.info('Running generateQuestionNode');
   
-  const prompt = `You are an expert AI Interviewer conducting a ${state.interviewType} interview for a ${state.jobRole} position.
+  const topicPool = TOPIC_POOLS[state.interviewType.toLowerCase()] || TOPIC_POOLS['behavioral'];
+  const remainingTopics = topicPool.filter(t => !state.topicsCovered.includes(t));
+
+  let prompt: string;
+
+  if (state.shouldWrapUp && state.currentStrategy === 'wrap_up_weak') {
+    prompt = `You are an expert AI Interviewer wrapping up a ${state.interviewType} interview for a ${state.jobRole} position.
+The candidate has struggled with multiple consecutive questions. End the interview kindly but honestly.
+Say something like: "I think I have a good sense of where things stand. That concludes our interview. I'd encourage you to spend more time on [mention a specific weak area you observed] before your next round. We'll be in touch."
+Keep it conversational, empathetic, and natural. Do not use markdown formatting.`;
+  } else if (state.shouldWrapUp && state.currentStrategy === 'wrap_up_complete') {
+    prompt = `You are an expert AI Interviewer wrapping up a ${state.interviewType} interview for a ${state.jobRole} position.
+You've covered all the major topics and the candidate has performed reasonably well.
+Say something like: "I think I have everything I need. That concludes our interview. You covered some solid ground today, particularly on [mention a specific strong area]. We'll be in touch soon."
+Keep it conversational and natural. Do not use markdown formatting.`;
+  } else {
+    prompt = `You are an expert AI Interviewer conducting a ${state.interviewType} interview for a ${state.jobRole} position.
 Your current strategy is: ${state.currentStrategy}.
 Current difficulty level (1-5): ${state.difficulty}.
 
-If strategy is 'probe_deeper', ask them to clarify or provide a specific example (e.g. using STAR method).
-If strategy is 'challenge_assumption', push back politely on a weak point in their answer.
-If strategy is 'next_question', acknowledge their good answer briefly and move to a new topic.
+TOPICS ALREADY COVERED (DO NOT revisit these): ${state.topicsCovered.length > 0 ? state.topicsCovered.join(', ') : 'None yet'}.
+TOPICS REMAINING to cover: ${remainingTopics.join(', ')}.
 
-Keep your response conversational, concise, and sound like a real human speaking. Do not use markdown formatting.`;
+CRITICAL RULES:
+- If strategy is 'probe_deeper', ask ONE clarifying follow-up about the SAME topic to give them a chance to demonstrate depth.
+- If strategy is 'challenge_assumption', push back politely on a weak point, then prepare to move on.
+- If strategy is 'next_question', briefly acknowledge their answer (1 sentence max), then ask about one of the REMAINING topics. Pick the most natural next topic from the remaining list.
+- NEVER ask about a topic that is already in the COVERED list.
+- Keep your response conversational, concise (2-4 sentences max), and sound like a real human interviewer. Do not use markdown formatting.
+- Do not tell the candidate how many topics are left or that you are tracking topics.`;
+  }
 
   const response = await generationModel.invoke([
     new SystemMessage(prompt),
