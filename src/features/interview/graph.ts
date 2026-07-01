@@ -182,11 +182,12 @@ Say something like: "I think I have everything I need. That concludes our interv
 Keep it conversational and natural. Do not use markdown formatting.`;
   } else if (state.messages.length <= 1) {
     // Very first message opening
+    console.log('Generating opening question for interviewType:', state.interviewType, '| topic pool being used:', JSON.stringify(topicPool));
     prompt = `You are an expert AI Interviewer starting a ${state.interviewType} interview for a ${state.jobRole} position.
 CRITICAL RULES:
 1. Greet the candidate, explicitly mention the ${state.jobRole} role.
 2. Briefly outline what the interview will cover based on these topics: ${remainingTopics.slice(0, 3).join(', ')}.
-3. Ask exactly ONE opening question to get started. Do not ask multiple questions.
+3. Ask exactly ONE opening question to get started. This opening question MUST be directly related to the first topic: "${remainingTopics[0]}". Do NOT ask generic icebreakers, motivation, or culture-fit questions unless this is explicitly an HR / Culture Fit interview.
 Keep it conversational and natural (2-4 sentences max). Do not use markdown formatting.`;
   } else {
     prompt = `You are an expert AI Interviewer conducting a ${state.interviewType} interview for the role of ${state.jobRole} at ${state.experienceLevel || 'Entry'} level.
