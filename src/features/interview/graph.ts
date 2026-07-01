@@ -7,35 +7,26 @@ import logger from '../../utils/logger';
 
 // Topic pools per interview type
 const TOPIC_POOLS: Record<string, string[]> = {
-  behavioral: [
-    'Leadership & Initiative',
-    'Conflict Resolution',
-    'Teamwork & Collaboration',
-    'Handling Failure & Learning',
-    'Communication & Influence',
-    'Time Management & Prioritization',
+  'Behavioral': [
+    'a time you showed leadership or ownership',
+    'how you handle disagreement or conflict',
+    'a challenge you overcame',
   ],
-  technical: [
-    'System Design & Architecture',
-    'Data Structures & Algorithms',
-    'API Design & Integration',
-    'Database Design & Optimization',
-    'Testing & Code Quality',
+  'Technical': [
+    'a difficult technical problem and how you debugged it',
+    'a design decision you made and the tradeoffs involved',
+    'how you approach learning a new technology or language',
+    'a time your code or system failed and what you did',
   ],
-  'system design': [
-    'distributed systems',
-    'scalability',
-    'database choices',
-    'API design',
-    'tradeoffs',
-    'CAP theorem',
+  'System Design': [
+    'how you would design a scalable system for X',
+    'tradeoffs between different architecture choices',
+    'how you would handle a specific failure scenario',
   ],
-  'hr / culture fit': [
-    'motivation for role',
-    'handling conflict',
-    'values alignment',
-    'career goals',
-    'team dynamics',
+  'HR / Culture Fit': [
+    'what motivates you in this role',
+    'how you handle ambiguity or shifting priorities',
+    'what kind of team environment you thrive in',
   ],
 };
 
@@ -120,7 +111,7 @@ ${parser.getFormatInstructions()}`;
 async function strategizeNode(state: typeof InterviewStateAnnotation.State) {
   logger.info('Running strategizeNode');
   const evaluation = state.evaluationNote;
-  const topicPool = TOPIC_POOLS[state.interviewType.toLowerCase()] || TOPIC_POOLS['behavioral'];
+  const topicPool = TOPIC_POOLS[state.interviewType] || TOPIC_POOLS['Behavioral'];
   
   let newDifficulty = state.difficulty;
   let strategy = 'next_question';
@@ -173,7 +164,7 @@ async function strategizeNode(state: typeof InterviewStateAnnotation.State) {
 async function generateQuestionNode(state: typeof InterviewStateAnnotation.State) {
   logger.info('Running generateQuestionNode');
   
-  const topicPool = TOPIC_POOLS[state.interviewType.toLowerCase()] || TOPIC_POOLS['behavioral'];
+  const topicPool = TOPIC_POOLS[state.interviewType] || TOPIC_POOLS['Behavioral'];
   const remainingTopics = topicPool.filter(t => !state.topicsCovered.includes(t));
 
   let prompt: string;
@@ -201,17 +192,16 @@ Keep it conversational and natural (2-4 sentences max). Do not use markdown form
 Your current strategy is: ${state.currentStrategy}.
 Current difficulty level (1-5): ${state.difficulty}.
 
-TOPICS ALREADY COVERED (DO NOT revisit these): ${state.topicsCovered.length > 0 ? state.topicsCovered.join(', ') : 'None yet'}.
-TOPICS REMAINING to cover: ${remainingTopics.join(', ')}.
+PREVIOUSLY DISCUSSED TOPICS: ${state.topicsCovered.length > 0 ? state.topicsCovered.join(', ') : 'None yet'}.
+AVAILABLE TOPICS TO CHOOSE FROM: ${remainingTopics.join(', ')}.
 
 CRITICAL RULES:
 1. Ask exactly ONE question at a time. NEVER ask multiple questions in a single response.
-2. If strategy is 'probe_deeper', ask ONE clarifying follow-up about the SAME topic to give them a chance to demonstrate depth.
+2. If strategy is 'probe_deeper', ask ONE clarifying follow-up about the current topic to give them a chance to demonstrate depth.
 3. If strategy is 'challenge_assumption', push back politely on a weak point, then prepare to move on.
-4. If strategy is 'next_question', briefly acknowledge their answer (1 sentence max), then ask ONE question about one of the REMAINING topics. Pick the most natural next topic from the remaining list.
-5. NEVER ask about a topic that is already in the COVERED list.
-Keep your response conversational, concise (2-4 sentences max), and sound like a real human interviewer. Do not use markdown formatting.
-Do not tell the candidate how many topics are left or that you are tracking topics.`;
+4. If strategy is 'next_question', briefly acknowledge their answer (1 sentence max), then select ONE of the AVAILABLE TOPICS and ask a new question about it.
+5. Keep your response conversational, concise (2-4 sentences max), and sound like a real human interviewer. Do not use markdown formatting.
+6. Do NOT mention out loud that you are changing topics or picking from a list. Transition naturally.`;
   }
 
   const response = await generationModel.invoke([

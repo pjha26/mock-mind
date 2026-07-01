@@ -13,8 +13,8 @@ function extractConfigFromSystemMessage(messages: any[]): { interviewType: strin
   if (systemMsg?.content) {
     const content = systemMsg.content as string;
     
-    // Try to extract interview type (Technical, Behavioral, Case Study)
-    const typeMatch = content.match(/\b(Technical|Behavioral|Case Study)\b/i);
+    // Try to extract interview type (Technical, Behavioral, System Design, HR / Culture Fit)
+    const typeMatch = content.match(/\b(Technical|Behavioral|System Design|HR \/ Culture Fit)\b/i);
     if (typeMatch) interviewType = typeMatch[1];
 
     // Try to extract job role
