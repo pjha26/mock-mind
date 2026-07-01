@@ -51,8 +51,9 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
     return 'text-zinc-300';
   };
 
+  const handleStart = () => {
     // Start the Vapi session
-    startInterview();
+    startInterview(interviewType, jobRole);
   };
 
   const handleEnd = async () => {
