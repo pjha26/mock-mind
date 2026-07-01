@@ -80,10 +80,12 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {pastInterviews.map((interview: any) => {
                 const isCompleted = interview.status === 'COMPLETED';
+                const isAbandoned = interview.status === 'ABANDONED';
+                
                 const CardContent = (
-                  <div className={`p-6 border border-neutral-800 rounded-2xl bg-neutral-900 transition-colors group h-full flex flex-col ${isCompleted ? 'hover:border-emerald-500/50 cursor-pointer' : 'opacity-75'}`}>
+                  <div className={`p-6 border border-neutral-800 rounded-2xl bg-neutral-900 transition-colors group h-full flex flex-col ${isCompleted ? 'hover:border-emerald-500/50 cursor-pointer' : isAbandoned ? 'opacity-50 grayscale' : 'opacity-75'}`}>
                     <div className="flex justify-between items-start mb-4">
-                      <span className={`px-3 py-1 text-sm font-medium rounded-full ${isCompleted ? 'bg-emerald-500/10 text-emerald-400' : 'bg-neutral-500/10 text-neutral-400'}`}>
+                      <span className={`px-3 py-1 text-sm font-medium rounded-full ${isCompleted ? 'bg-emerald-500/10 text-emerald-400' : isAbandoned ? 'bg-neutral-800 text-neutral-400' : 'bg-neutral-500/10 text-neutral-400'}`}>
                         {interview.type}
                       </span>
                       <span className="text-sm text-neutral-500">
@@ -91,7 +93,7 @@ export default function DashboardPage() {
                       </span>
                     </div>
                     <h3 className={`font-semibold mb-2 transition-colors ${isCompleted ? 'group-hover:text-emerald-400' : 'text-neutral-500'}`}>
-                      {isCompleted ? 'View Feedback Report' : 'Incomplete Session'}
+                      {isCompleted ? 'View Feedback Report' : isAbandoned ? 'Abandoned Session' : 'Incomplete Session'}
                     </h3>
                     <p className="text-sm text-neutral-400 mt-auto">
                       Status: {interview.status}

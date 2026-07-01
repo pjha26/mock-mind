@@ -63,6 +63,9 @@ export default function SetupPage() {
       
       if (!res.ok) throw new Error(data.error || 'Failed to create interview');
       
+      if (data.beaconToken) {
+        sessionStorage.setItem(`beaconToken_${data.id}`, data.beaconToken);
+      }
       router.push(`/interview/${data.id}?type=${selectedType}&role=${role}`);
     } catch (error) {
       console.error(error);

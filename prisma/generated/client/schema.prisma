@@ -22,15 +22,16 @@ model User {
 }
 
 model Interview {
-  id         String    @id @default(uuid())
-  userId     String
-  user       User      @relation(fields: [userId], references: [id])
-  type       String
-  status     String
-  transcript Json?
-  feedback   Json?
-  startedAt  DateTime  @default(now())
-  endedAt    DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  type           String
+  status         String
+  transcript     Json?
+  feedback       Json?
+  startedAt      DateTime  @default(now())
+  endedAt        DateTime?
+  lastActivityAt DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }

@@ -142,6 +142,7 @@ exports.Prisma.InterviewScalarFieldEnum = {
   feedback: 'feedback',
   startedAt: 'startedAt',
   endedAt: 'endedAt',
+  lastActivityAt: 'lastActivityAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

@@ -3,19 +3,33 @@
 import { useVapi } from '@/features/interview/use-vapi';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Briefcase, Mic, MicOff, PhoneOff } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 
-export default function InterviewRoom({ params }: { params: { id: string } }) {
+export default function InterviewRoom({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const unwrappedParams = use(params);
   
   const interviewType = searchParams.get('type') || 'Behavioral';
   const jobRole = searchParams.get('role') || 'Frontend Engineer';
   const totalQuestions = interviewType.toLowerCase() === 'technical' ? 5 : 6;
 
-  const { isSessionActive, isSpeaking, activeTranscript, currentQuestionIndex, timeLeft, startInterview, stopInterview, getTranscript } = useVapi();
-  const [interviewId, setInterviewId] = useState<string | null>(null);
+  const { isSessionActive, isSpeaking, activeTranscript, currentQuestionIndex, timeLeft, startInterview, stopInterview, getTranscript } = useVapi(unwrappedParams.id, interviewType, jobRole);
+  const [interviewId, setInterviewId] = useState<string | null>(unwrappedParams.id);
   const [isEnding, setIsEnding] = useState(false);
+
+  // Add beforeunload listener to send beacon
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const beaconToken = sessionStorage.getItem(`beaconToken_${unwrappedParams.id}`);
+      if (beaconToken && isSessionActive && !isEnding) {
+        const payload = JSON.stringify({ beaconToken });
+        navigator.sendBeacon(`/api/interviews/${unwrappedParams.id}/abandon`, payload);
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [unwrappedParams.id, isSessionActive, isEnding]);
 
   // Auto-end when timer hits zero
   useEffect(() => {
@@ -37,24 +51,8 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
     return 'text-zinc-300';
   };
 
-  const handleStart = async () => {
-    try {
-      // Create interview record in DB
-      const res = await fetch('/api/interviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: interviewType, role: jobRole }),
-      });
-      const data = await res.json();
-      if (data.interviewId) {
-        setInterviewId(data.interviewId);
-      }
-    } catch (err) {
-      console.warn('Failed to create DB record (non-critical):', err);
-    }
-
-    // Start the Vapi session regardless of DB success
-    startInterview(interviewType, jobRole);
+    // Start the Vapi session
+    startInterview();
   };
 
   const handleEnd = async () => {

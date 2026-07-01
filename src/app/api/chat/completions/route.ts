@@ -4,8 +4,8 @@ import { NextResponse } from 'next/server';
 import { interviewGraph } from '../../../../features/interview/graph';
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
 
-// Extract interview config from Vapi's system message before we strip it
-function extractConfigFromSystemMessage(messages: any[]): { interviewType: string; jobRole: string } {
+// Fallback config extraction if Vapi doesn't send variableValues properly
+function extractFallbackConfigFromSystemMessage(messages: any[]): { interviewType: string; jobRole: string } {
   const systemMsg = messages.find((m: any) => m.role === 'system');
   let interviewType = 'Behavioral';
   let jobRole = 'Software Engineer';
@@ -27,14 +27,28 @@ function extractConfigFromSystemMessage(messages: any[]): { interviewType: strin
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    console.log('VAPI PAYLOAD:', JSON.stringify(body, null, 2));
     const { messages } = body;
     
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Invalid messages array' }, { status: 400 });
     }
 
-    // Extract interview config BEFORE filtering out system messages
-    const { interviewType, jobRole } = extractConfigFromSystemMessage(messages);
+    // Attempt to extract structured fields directly from the Vapi Custom LLM payload
+    // Vapi can send this in body.call.variableValues or body.message.call.variableValues
+    const vapiCall = body.call || body.message?.call;
+    const vapiVars = vapiCall?.variableValues || body.variableValues || {};
+    
+    const interviewId = vapiVars.interviewId;
+    let interviewType = vapiVars.interviewType;
+    let jobRole = vapiVars.jobRole;
+
+    // Fallback to regex ONLY if structural fields are missing
+    if (!interviewType || !jobRole) {
+      const fallback = extractFallbackConfigFromSystemMessage(messages);
+      interviewType = interviewType || fallback.interviewType;
+      jobRole = jobRole || fallback.jobRole;
+    }
 
     const langChainMessages = messages
       .filter((m: any) => m.role !== 'system')
@@ -63,6 +77,17 @@ export async function POST(req: Request) {
     try {
       const finalState = await interviewGraph.invoke(initialState);
       finalMessage = finalState.messages[finalState.messages.length - 1];
+
+      // Update lastActivityAt in the background
+      if (interviewId) {
+        import('../../../../lib/prisma').then(({ default: prisma }) => {
+          prisma.interview.update({
+            where: { id: interviewId },
+            data: { lastActivityAt: new Date() }
+          }).catch(e => console.error('Failed to update lastActivityAt', e));
+        });
+      }
+
     } catch (llmError: any) {
       console.error('=== LLM INVOCATION FAILED ===');
       console.error(llmError);

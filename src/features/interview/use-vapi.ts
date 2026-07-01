@@ -6,7 +6,7 @@ import Vapi from '@vapi-ai/web';
 // Using the exact environment variable from your .env file
 const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || '');
 
-export function useVapi() {
+export function useVapi(interviewId: string | null = null, interviewType = 'Behavioral', jobRole = 'Software Engineer') {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState<{ role: string; text: string }[]>([]);
@@ -133,7 +133,8 @@ export function useVapi() {
       await vapi.start(assistantId, {
         variableValues: {
           interviewType: interviewType,
-          jobRole: jobRole
+          jobRole: jobRole,
+          ...(interviewId && { interviewId })
         }
       });
       

@@ -1960,6 +1960,7 @@ export namespace Prisma {
     status: string | null
     startedAt: Date | null
     endedAt: Date | null
+    lastActivityAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1971,6 +1972,7 @@ export namespace Prisma {
     status: string | null
     startedAt: Date | null
     endedAt: Date | null
+    lastActivityAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1984,6 +1986,7 @@ export namespace Prisma {
     feedback: number
     startedAt: number
     endedAt: number
+    lastActivityAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -1997,6 +2000,7 @@ export namespace Prisma {
     status?: true
     startedAt?: true
     endedAt?: true
+    lastActivityAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2008,6 +2012,7 @@ export namespace Prisma {
     status?: true
     startedAt?: true
     endedAt?: true
+    lastActivityAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2021,6 +2026,7 @@ export namespace Prisma {
     feedback?: true
     startedAt?: true
     endedAt?: true
+    lastActivityAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2107,6 +2113,7 @@ export namespace Prisma {
     feedback: JsonValue | null
     startedAt: Date
     endedAt: Date | null
+    lastActivityAt: Date
     createdAt: Date
     updatedAt: Date
     _count: InterviewCountAggregateOutputType | null
@@ -2137,6 +2144,7 @@ export namespace Prisma {
     feedback?: boolean
     startedAt?: boolean
     endedAt?: boolean
+    lastActivityAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -2151,6 +2159,7 @@ export namespace Prisma {
     feedback?: boolean
     startedAt?: boolean
     endedAt?: boolean
+    lastActivityAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -2165,6 +2174,7 @@ export namespace Prisma {
     feedback?: boolean
     startedAt?: boolean
     endedAt?: boolean
+    lastActivityAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
@@ -2190,6 +2200,7 @@ export namespace Prisma {
       feedback: Prisma.JsonValue | null
       startedAt: Date
       endedAt: Date | null
+      lastActivityAt: Date
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["interview"]>
@@ -2594,6 +2605,7 @@ export namespace Prisma {
     readonly feedback: FieldRef<"Interview", 'Json'>
     readonly startedAt: FieldRef<"Interview", 'DateTime'>
     readonly endedAt: FieldRef<"Interview", 'DateTime'>
+    readonly lastActivityAt: FieldRef<"Interview", 'DateTime'>
     readonly createdAt: FieldRef<"Interview", 'DateTime'>
     readonly updatedAt: FieldRef<"Interview", 'DateTime'>
   }
@@ -2965,6 +2977,7 @@ export namespace Prisma {
     feedback: 'feedback',
     startedAt: 'startedAt',
     endedAt: 'endedAt',
+    lastActivityAt: 'lastActivityAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -3152,6 +3165,7 @@ export namespace Prisma {
     feedback?: JsonNullableFilter<"Interview">
     startedAt?: DateTimeFilter<"Interview"> | Date | string
     endedAt?: DateTimeNullableFilter<"Interview"> | Date | string | null
+    lastActivityAt?: DateTimeFilter<"Interview"> | Date | string
     createdAt?: DateTimeFilter<"Interview"> | Date | string
     updatedAt?: DateTimeFilter<"Interview"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
@@ -3166,6 +3180,7 @@ export namespace Prisma {
     feedback?: SortOrderInput | SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrderInput | SortOrder
+    lastActivityAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -3183,6 +3198,7 @@ export namespace Prisma {
     feedback?: JsonNullableFilter<"Interview">
     startedAt?: DateTimeFilter<"Interview"> | Date | string
     endedAt?: DateTimeNullableFilter<"Interview"> | Date | string | null
+    lastActivityAt?: DateTimeFilter<"Interview"> | Date | string
     createdAt?: DateTimeFilter<"Interview"> | Date | string
     updatedAt?: DateTimeFilter<"Interview"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
@@ -3197,6 +3213,7 @@ export namespace Prisma {
     feedback?: SortOrderInput | SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrderInput | SortOrder
+    lastActivityAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: InterviewCountOrderByAggregateInput
@@ -3216,6 +3233,7 @@ export namespace Prisma {
     feedback?: JsonNullableWithAggregatesFilter<"Interview">
     startedAt?: DateTimeWithAggregatesFilter<"Interview"> | Date | string
     endedAt?: DateTimeNullableWithAggregatesFilter<"Interview"> | Date | string | null
+    lastActivityAt?: DateTimeWithAggregatesFilter<"Interview"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"Interview"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Interview"> | Date | string
   }
@@ -3309,6 +3327,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: Date | string
     endedAt?: Date | string | null
+    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutInterviewsInput
@@ -3323,6 +3342,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: Date | string
     endedAt?: Date | string | null
+    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3335,6 +3355,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutInterviewsNestedInput
@@ -3349,6 +3370,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3362,6 +3384,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: Date | string
     endedAt?: Date | string | null
+    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3374,6 +3397,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3387,6 +3411,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3577,6 +3602,7 @@ export namespace Prisma {
     feedback?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrder
+    lastActivityAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -3588,6 +3614,7 @@ export namespace Prisma {
     status?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrder
+    lastActivityAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -3599,6 +3626,7 @@ export namespace Prisma {
     status?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrder
+    lastActivityAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -3878,6 +3906,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: Date | string
     endedAt?: Date | string | null
+    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3890,6 +3919,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: Date | string
     endedAt?: Date | string | null
+    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3932,6 +3962,7 @@ export namespace Prisma {
     feedback?: JsonNullableFilter<"Interview">
     startedAt?: DateTimeFilter<"Interview"> | Date | string
     endedAt?: DateTimeNullableFilter<"Interview"> | Date | string | null
+    lastActivityAt?: DateTimeFilter<"Interview"> | Date | string
     createdAt?: DateTimeFilter<"Interview"> | Date | string
     updatedAt?: DateTimeFilter<"Interview"> | Date | string
   }
@@ -4004,6 +4035,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: Date | string
     endedAt?: Date | string | null
+    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4016,6 +4048,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4028,6 +4061,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4040,6 +4074,7 @@ export namespace Prisma {
     feedback?: NullableJsonNullValueInput | InputJsonValue
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

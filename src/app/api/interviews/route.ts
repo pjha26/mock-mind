@@ -2,8 +2,8 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import prisma from '../../../lib/prisma';
-
 import { getUserFromRequest } from '../../../lib/auth-server';
+import { generateBeaconToken } from '../../../lib/beacon-auth';
 
 // POST /api/interviews — Create a new interview session
 export async function POST(req: Request) {
@@ -21,7 +21,8 @@ export async function POST(req: Request) {
         status: 'IN_PROGRESS',
       },
     });
-    return NextResponse.json({ id: interview.id }, { status: 201 });
+    const beaconToken = await generateBeaconToken(interview.id, userId);
+    return NextResponse.json({ id: interview.id, beaconToken }, { status: 201 });
   } catch (error: any) {
     console.error('Failed to create interview:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -33,7 +34,22 @@ export async function GET(req: Request) {
   try {
     const user = await getUserFromRequest(req);
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const thirtyMinsAgo = new Date(Date.now() - 30 * 60 * 1000);
     
+    // Auto-cleanup stale sessions
+    await prisma.interview.updateMany({
+      where: {
+        userId: user.userId,
+        status: 'IN_PROGRESS',
+        lastActivityAt: {
+          lt: thirtyMinsAgo,
+        },
+      },
+      data: {
+        status: 'ABANDONED',
+      },
+    });
+
     const interviews = await prisma.interview.findMany({
       where: { userId: user.userId },
       orderBy: { createdAt: 'desc' },
