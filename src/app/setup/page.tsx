@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import TopNavBar from '@/components/top-nav-bar';
 import Footer from '@/components/footer';
-import { Brain, Network, LineChart, ChevronDown, Rocket } from 'lucide-react';
+import { Brain, Network, Database, Users, ChevronDown, Rocket } from 'lucide-react';
 
 const INTERVIEW_TYPES = [
   {
@@ -18,9 +18,14 @@ const INTERVIEW_TYPES = [
     description: 'System design and architecture principles.',
   },
   {
-    id: 'Case Study',
-    icon: LineChart,
-    description: 'Product sense, metrics, and strategic thinking.',
+    id: 'System Design',
+    icon: Database,
+    description: 'Architecture thinking, tradeoffs, complexity.',
+  },
+  {
+    id: 'HR / Culture Fit',
+    icon: Users,
+    description: 'Motivation, values, situational judgment.',
   },
 ];
 
@@ -50,7 +55,7 @@ export default function SetupPage() {
           </div>
 
           {/* Interview Type Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {INTERVIEW_TYPES.map((type) => {
               const isActive = selectedType === type.id;
               const Icon = type.icon;
@@ -60,7 +65,7 @@ export default function SetupPage() {
                   onClick={() => setSelectedType(type.id)}
                   className={`glass-card rounded-xl p-8 flex flex-col items-center justify-center gap-4 text-center group cursor-pointer transition-all duration-300 relative overflow-hidden ${
                     isActive 
-                      ? 'border-2 border-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.3)] bg-blue-500/10 transform -translate-y-1' 
+                      ? 'border border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.2)] bg-blue-500/5 transform -translate-y-1' 
                       : 'border border-outline-variant hover:border-zinc-500 hover:bg-zinc-800/30'
                   }`}
                   aria-label={`Select ${type.id} interview`}

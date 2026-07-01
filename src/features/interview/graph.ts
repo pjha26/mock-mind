@@ -22,12 +22,20 @@ const TOPIC_POOLS: Record<string, string[]> = {
     'Database Design & Optimization',
     'Testing & Code Quality',
   ],
-  'case study': [
-    'Product Sense & User Empathy',
-    'Metrics & KPIs',
-    'Market Analysis & Strategy',
-    'Prioritization Frameworks',
-    'Go-to-Market Strategy',
+  'system design': [
+    'distributed systems',
+    'scalability',
+    'database choices',
+    'API design',
+    'tradeoffs',
+    'CAP theorem',
+  ],
+  'hr / culture fit': [
+    'motivation for role',
+    'handling conflict',
+    'values alignment',
+    'career goals',
+    'team dynamics',
   ],
 };
 
