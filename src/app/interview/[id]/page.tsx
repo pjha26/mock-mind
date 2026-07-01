@@ -75,15 +75,16 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
       } catch (err) {
         console.warn('Failed to save transcript to DB:', err);
       }
-    }
-
-    // Navigate to feedback page with interview data
-    if (interviewId) {
+      
       router.push(`/feedback?id=${interviewId}`);
-    } else {
+    } else if (!interviewId && transcript.length > 0) {
       // Fallback: pass transcript via localStorage
       localStorage.setItem('mockMindTranscript', JSON.stringify(transcript));
       router.push('/feedback');
+    } else {
+      // If there's no transcript, we cannot generate a report
+      alert("Session ended before any conversation was recorded. Cannot generate feedback.");
+      router.push('/dashboard');
     }
   };
 
