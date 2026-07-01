@@ -32,6 +32,9 @@ export async function POST(req: Request) {
       id: user.id,
       email: user.email,
       name: user.name,
+      jobRole: user.jobRole,
+      experienceLevel: user.experienceLevel,
+      token,
     }));
 
     response.cookies.set({

@@ -11,7 +11,7 @@ import logger from '../../../../utils/logger';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, password, name } = body;
+    const { email, password, name, jobRole, experienceLevel } = body;
 
     if (!email || !password || !name) {
       return NextResponse.json(errorResponse('Missing required fields'), { status: 400 });
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     }
 
     const passwordHash = await hashPassword(password);
-    const user = await createUser({ email, passwordHash, name });
+    const user = await createUser({ email, passwordHash, name, jobRole, experienceLevel });
 
     const token = await signToken({ userId: user.id, email: user.email });
 
@@ -31,6 +31,9 @@ export async function POST(req: Request) {
       id: user.id,
       email: user.email,
       name: user.name,
+      jobRole: user.jobRole,
+      experienceLevel: user.experienceLevel,
+      token,
     }));
 
     response.cookies.set({

@@ -13,13 +13,15 @@ export async function findUserByEmail(email: string) {
   }
 }
 
-export async function createUser(data: { email: string; passwordHash: string; name: string }) {
+export async function createUser(data: { email: string; passwordHash: string; name: string; jobRole?: string; experienceLevel?: string; }) {
   try {
     return await prisma.user.create({
       data: {
         email: data.email,
         passwordHash: data.passwordHash,
         name: data.name,
+        jobRole: data.jobRole,
+        experienceLevel: data.experienceLevel,
       },
     });
   } catch (error) {
