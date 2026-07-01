@@ -21,19 +21,12 @@ function extractConfigFromSystemMessage(messages: any[]): { interviewType: strin
     const roleMatch = content.match(/(?:for a|for the|as a|as an)\s+(.+?)\s+(?:candidate|position|role|interview)/i);
     if (roleMatch) jobRole = roleMatch[1];
   }
-
-  console.log(`Extracted config — Type: ${interviewType}, Role: ${jobRole}`);
   return { interviewType, jobRole };
 }
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    
-    console.log('=== INCOMING REQUEST FROM VAPI ===');
-    console.log('Body:', JSON.stringify(body, null, 2));
-    console.log('-----------------------------');
-
     const { messages } = body;
     
     if (!messages || !Array.isArray(messages)) {
@@ -70,11 +63,6 @@ export async function POST(req: Request) {
     try {
       const finalState = await interviewGraph.invoke(initialState);
       finalMessage = finalState.messages[finalState.messages.length - 1];
-      console.log('=== OUTGOING RESPONSE TO VAPI ===');
-      console.log('Response:', finalMessage.content);
-      console.log('Topics covered:', finalState.topicsCovered);
-      console.log('Strategy:', finalState.currentStrategy);
-      console.log('---------------------------------');
     } catch (llmError: any) {
       console.error('=== LLM INVOCATION FAILED ===');
       console.error(llmError);

@@ -76,7 +76,6 @@ ${parser.getFormatInstructions()}`;
           feedback: parsedFeedback,
         },
       });
-      console.log(`Saved feedback for interview ${interviewId}`);
     }
 
     return NextResponse.json(parsedFeedback);

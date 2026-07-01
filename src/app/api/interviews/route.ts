@@ -21,8 +21,6 @@ export async function POST(req: Request) {
         status: 'IN_PROGRESS',
       },
     });
-
-    console.log('Created interview session:', interview.id);
     return NextResponse.json({ id: interview.id }, { status: 201 });
   } catch (error: any) {
     console.error('Failed to create interview:', error);

@@ -20,7 +20,6 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
   // Auto-end when timer hits zero
   useEffect(() => {
     if (isSessionActive && timeLeft === 0 && !isEnding) {
-      console.log('Timer hit zero, auto-ending session.');
       handleEnd();
     }
   }, [timeLeft, isSessionActive, isEnding]);
@@ -49,7 +48,6 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
       const data = await res.json();
       if (data.interviewId) {
         setInterviewId(data.interviewId);
-        console.log('Interview DB record created:', data.interviewId);
       }
     } catch (err) {
       console.warn('Failed to create DB record (non-critical):', err);
@@ -74,7 +72,6 @@ export default function InterviewRoom({ params }: { params: { id: string } }) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ transcript }),
         });
-        console.log('Transcript saved to DB');
       } catch (err) {
         console.warn('Failed to save transcript to DB:', err);
       }

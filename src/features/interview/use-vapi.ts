@@ -42,21 +42,17 @@ export function useVapi() {
   }, [isSessionActive]);
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY) {
-      console.log('Vapi Public Key Loaded:', process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY.substring(0, 5) + '...');
-    } else {
+    if (!process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY) {
       console.error('CRITICAL: NEXT_PUBLIC_VAPI_PUBLIC_KEY is missing from .env!');
     }
 
     vapi.on('call-start', () => {
-      console.log('Vapi call-start event fired. Session active.');
       setIsSessionActive(true);
       setCurrentQuestionIndex(0);
       setTimeLeft(570);
     });
     
     vapi.on('call-end', () => {
-      console.log('Vapi call-end event fired. Session ended.');
       setIsSessionActive(false);
       setIsStarting(false);
     });
@@ -109,9 +105,7 @@ export function useVapi() {
     try {
       // 1. Warm up Vercel serverless function to avoid cold start timeout
       try {
-        console.log('Warming up Vercel serverless function...');
         await fetch('https://mock-mind-silk.vercel.app/api/health');
-        console.log('Warm-up complete.');
       } catch (e) {
         console.warn('Warm-up ping failed (non-critical):', e);
       }
@@ -136,7 +130,6 @@ export function useVapi() {
         return;
       }
 
-      console.log(`Starting Vapi with assistant ID: ${assistantId}, type: ${interviewType}, role: ${jobRole}`);
       await vapi.start(assistantId, {
         variableValues: {
           interviewType: interviewType,

@@ -21,8 +21,6 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         endedAt: new Date(),
       },
     });
-
-    console.log(`Saved transcript for interview ${id}, ${transcript.length} entries`);
     return NextResponse.json({ success: true, interviewId: updated.id });
   } catch (error: any) {
     console.error('Failed to save transcript:', error);
