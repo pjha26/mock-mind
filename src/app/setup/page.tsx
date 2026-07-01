@@ -137,10 +137,10 @@ export default function SetupPage() {
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                 >
-                  <option value="Senior Product Manager">Senior Product Manager</option>
-                  <option value="Frontend Engineer">Frontend Engineer</option>
-                  <option value="Backend Engineer">Backend Engineer</option>
-                  <option value="Data Scientist">Data Scientist</option>
+                  <option className="bg-zinc-900 text-white" value="Senior Product Manager">Senior Product Manager</option>
+                  <option className="bg-zinc-900 text-white" value="Frontend Engineer">Frontend Engineer</option>
+                  <option className="bg-zinc-900 text-white" value="Backend Engineer">Backend Engineer</option>
+                  <option className="bg-zinc-900 text-white" value="Data Scientist">Data Scientist</option>
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-on-surface-variant">
                   <ChevronDown className="w-5 h-5 text-on-surface-variant" />
