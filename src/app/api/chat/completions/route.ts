@@ -18,9 +18,10 @@ export async function POST(req: Request) {
 
     const interviewType = body?.assistant?.variableValues?.interviewType || 'Behavioral';
     const jobRole = body?.assistant?.variableValues?.jobRole || 'Software Engineer';
+    const experienceLevel = body?.assistant?.variableValues?.experienceLevel || 'Entry';
     const interviewId = body?.assistant?.variableValues?.interviewId || null;
 
-    console.log('Resolved interviewType:', interviewType, '| jobRole:', jobRole);
+    console.log('Resolved interviewType:', interviewType, '| jobRole:', jobRole, '| experienceLevel:', experienceLevel);
 
     const langChainMessages = messages
       .filter((m: any) => m.role !== 'system')
@@ -34,6 +35,7 @@ export async function POST(req: Request) {
       messages: langChainMessages,
       jobRole,
       interviewType,
+      experienceLevel,
       difficulty: 1,
       currentStrategy: 'next_question',
       evaluationNote: '',

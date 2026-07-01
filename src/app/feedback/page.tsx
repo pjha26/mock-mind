@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import TopNavBar from '@/components/top-nav-bar';
 import Footer from '@/components/footer';
 import { RotateCcw, Target, Zap, MessageSquare, TrendingUp, AlertTriangle, Loader2 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import { Suspense } from 'react';
 
@@ -27,8 +27,12 @@ function FeedbackContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const isGeneratingRef = useRef(false);
+
   useEffect(() => {
     async function generateFeedback() {
+      if (isGeneratingRef.current) return;
+      isGeneratingRef.current = true;
       try {
         let body: any = {};
 
