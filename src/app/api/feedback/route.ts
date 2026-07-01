@@ -9,7 +9,7 @@ import prisma from '../../../lib/prisma';
 
 const feedbackModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama-3.3-70b-versatile',
+  model: 'llama-3.1-8b-instant',
   temperature: 0.2,
 });
 
@@ -67,10 +67,10 @@ ${parser.getFormatInstructions()}`;
         new SystemMessage(prompt)
       ]);
     } catch (modelError: any) {
-      console.warn('Primary model failed (likely rate limit), falling back to llama-3.1-8b-instant:', modelError.message);
+      console.warn('Primary model failed, falling back to llama-3.3-70b-versatile:', modelError.message);
       const fallbackModel = new ChatGroq({
         apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-        model: 'llama-3.1-8b-instant',
+        model: 'llama-3.3-70b-versatile',
         temperature: 0.2,
       });
       response = await fallbackModel.invoke([

@@ -105,7 +105,7 @@ export function useVapi(interviewId: string | null = null, interviewType = 'Beha
     try {
       // 1. Warm up Vercel serverless function to avoid cold start timeout
       try {
-        await fetch('https://mock-mind-silk.vercel.app/api/health');
+        await fetch('/api/health');
       } catch (e) {
         console.warn('Warm-up ping failed (non-critical):', e);
       }

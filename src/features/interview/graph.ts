@@ -63,12 +63,12 @@ export const InterviewStateAnnotation = Annotation.Root({
 // 2. Models
 const primaryEvaluationModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama-3.3-70b-versatile',
+  model: 'llama-3.1-8b-instant',
   temperature: 0.1,
 });
 const fallbackEvaluationModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama-3.1-8b-instant',
+  model: 'llama-3.3-70b-versatile',
   temperature: 0.1,
 });
 const evaluationModel = primaryEvaluationModel.withFallbacks({
@@ -77,12 +77,12 @@ const evaluationModel = primaryEvaluationModel.withFallbacks({
 
 const primaryGenerationModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama-3.3-70b-versatile',
+  model: 'llama-3.1-8b-instant',
   temperature: 0.7,
 });
 const fallbackGenerationModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama-3.1-8b-instant',
+  model: 'llama-3.3-70b-versatile',
   temperature: 0.7,
 });
 const generationModel = primaryGenerationModel.withFallbacks({
