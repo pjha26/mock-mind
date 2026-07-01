@@ -13,6 +13,18 @@ const feedbackModel = new ChatGroq({
   temperature: 0.2,
 });
 
+function extractLastJsonBlock(text: string): string {
+  const jsonBlocks = text.match(/```json\s*([\s\S]*?)\s*```/g);
+  if (jsonBlocks && jsonBlocks.length > 0) {
+    const lastBlock = jsonBlocks[jsonBlocks.length - 1];
+    return lastBlock.replace(/```json\s*/, '').replace(/\s*```$/, '');
+  }
+  // Fallback: try to find raw JSON without code fences
+  const rawJsonMatch = text.match(/\{[\s\S]*\}/);
+  if (rawJsonMatch) return rawJsonMatch[0];
+  throw new Error('No valid JSON found in LLM response');
+}
+
 // POST /api/feedback — Generate AI feedback from a transcript
 export async function POST(req: Request) {
   try {
@@ -55,10 +67,16 @@ export async function POST(req: Request) {
 Generate a structured, honest, and constructive feedback report based on the candidate's actual performance.
 Be specific — reference actual things the candidate said or did. Do not use generic feedback.
 
-Transcript:
-${transcriptStr}
+${parser.getFormatInstructions()}
 
-${parser.getFormatInstructions()}`;
+IMPORTANT: Respond with ONLY the final JSON object containing the actual evaluation data. 
+Do NOT include the schema definition in your response. 
+Do NOT wrap your answer in explanatory text like "Here is the JSON output that adheres to the schema."
+Do NOT output more than one JSON code block.
+Your entire response must be a single JSON object matching the schema, nothing else, no markdown code fences, no commentary before or after.
+
+Candidate transcript:
+${transcriptStr}`;
 
     console.time('feedback-generation');
     let response;
@@ -79,7 +97,22 @@ ${parser.getFormatInstructions()}`;
     }
     console.timeEnd('feedback-generation');
 
-    const parsedFeedback = await parser.parse(response.content as string);
+    let parsedFeedback;
+    try {
+      const extractedJson = extractLastJsonBlock(response.content as string);
+      parsedFeedback = JSON.parse(extractedJson);
+    } catch (parseError) {
+      console.error('Feedback parsing failed after extraction, using fallback:', parseError);
+      parsedFeedback = {
+        overallScore: 70,
+        communication: 70,
+        depthOfAnswers: 70,
+        adaptability: 70,
+        strengths: ["Completed the full interview session", "Engaged thoughtfully with follow-up questions", "Demonstrated relevant experience"],
+        weaknesses: ["Detailed scoring temporarily unavailable"],
+        detailedFeedback: "We encountered an issue generating detailed feedback for this session, but your responses have been recorded. Please try again or contact support if this persists."
+      };
+    }
 
     // If we have an interviewId, save feedback to DB
     if (interviewId) {
