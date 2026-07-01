@@ -35,7 +35,7 @@ export default function SignupPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error?.message || 'Signup failed');
+        throw new Error(data.error || 'Signup failed');
       }
 
       if (data.data?.token) {
