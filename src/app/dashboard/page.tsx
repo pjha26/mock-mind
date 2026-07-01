@@ -1,21 +1,44 @@
-import { getUserInterviews } from '../../features/interview/interview.service';
-import { cookies } from 'next/headers';
-import { verifyToken } from '../../utils/jwt';
-import { COOKIE_NAME } from '../../config/constants';
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Plus, Clock, FileText } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Plus, Clock, FileText, Loader2 } from 'lucide-react';
+import { getToken } from '@/lib/auth-client';
 
-export default async function DashboardPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
-  
-  let userId = 'demo-user-id'; // Fallback for testing UI without login
-  if (token) {
-    const payload = await verifyToken(token);
-    if (payload) userId = payload.userId;
-  }
+export default function DashboardPage() {
+  const router = useRouter();
+  const [pastInterviews, setPastInterviews] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const pastInterviews = await getUserInterviews(userId);
+  useEffect(() => {
+    const fetchInterviews = async () => {
+      try {
+        const token = getToken();
+        if (!token) {
+          router.push('/login');
+          return;
+        }
+
+        const res = await fetch('/api/interviews', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error('Failed to fetch interviews');
+        
+        const data = await res.json();
+        setPastInterviews(data.interviews || []);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInterviews();
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 p-8 md:p-16">
@@ -39,7 +62,11 @@ export default async function DashboardPage() {
             Recent Sessions
           </h2>
           
-          {pastInterviews.length === 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center items-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+            </div>
+          ) : pastInterviews.length === 0 ? (
             <div className="p-8 border border-neutral-800 rounded-2xl bg-neutral-900/50 flex flex-col items-center justify-center text-center space-y-4">
               <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center">
                 <FileText className="w-8 h-8 text-neutral-500" />

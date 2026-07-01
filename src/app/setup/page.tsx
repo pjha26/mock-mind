@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import TopNavBar from '@/components/top-nav-bar';
 import Footer from '@/components/footer';
 import { Brain, Network, Database, Users, ChevronDown, Rocket } from 'lucide-react';
+import { getToken } from '@/lib/auth-client';
 
 const INTERVIEW_TYPES = [
   {
@@ -38,8 +39,31 @@ export default function SetupPage() {
   const [role, setRole] = useState<string>('Frontend Engineer');
   const [difficulty, setDifficulty] = useState<number>(2);
 
-  const handleLaunch = () => {
-    router.push(`/interview/demo-id?type=${selectedType}&role=${role}`);
+  const [isLaunching, setIsLaunching] = useState(false);
+
+  const handleLaunch = async () => {
+    setIsLaunching(true);
+    try {
+      const token = getToken();
+      const res = await fetch('/api/interviews', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ type: selectedType, role, difficulty })
+      });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || 'Failed to create interview');
+      
+      router.push(`/interview/${data.id}?type=${selectedType}&role=${role}`);
+    } catch (error) {
+      console.error(error);
+      alert('Failed to launch interview. Please ensure you are logged in.');
+    } finally {
+      setIsLaunching(false);
+    }
   };
 
   return (
