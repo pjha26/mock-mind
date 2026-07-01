@@ -4,9 +4,9 @@ import { NextResponse } from 'next/server';
 import prisma from '../../../../../lib/prisma';
 
 // PUT /api/interviews/[id]/transcript — Save transcript when interview ends
-export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const { transcript } = await req.json();
 
     if (!transcript || !Array.isArray(transcript)) {

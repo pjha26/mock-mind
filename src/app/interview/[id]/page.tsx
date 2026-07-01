@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Briefcase, Mic, MicOff, PhoneOff } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-export default function InterviewRoom({ params }: { params: Promise<{ id: string }> }) {
+export default function InterviewRoom({ params }: { params: { id: string } }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
