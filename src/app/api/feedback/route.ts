@@ -61,9 +61,22 @@ ${transcriptStr}
 ${parser.getFormatInstructions()}`;
 
     console.time('feedback-generation');
-    const response = await feedbackModel.invoke([
-      new SystemMessage(prompt)
-    ]);
+    let response;
+    try {
+      response = await feedbackModel.invoke([
+        new SystemMessage(prompt)
+      ]);
+    } catch (modelError: any) {
+      console.warn('Primary model failed (likely rate limit), falling back to llama-3.1-8b-instant:', modelError.message);
+      const fallbackModel = new ChatGroq({
+        apiKey: process.env.GROQ_API_KEY || 'dummy_key',
+        model: 'llama-3.1-8b-instant',
+        temperature: 0.2,
+      });
+      response = await fallbackModel.invoke([
+        new SystemMessage(prompt)
+      ]);
+    }
     console.timeEnd('feedback-generation');
 
     const parsedFeedback = await parser.parse(response.content as string);
