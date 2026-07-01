@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import TopNavBar from '@/components/top-nav-bar';
 import Footer from '@/components/footer';
 import { Brain, Network, Database, Users, ChevronDown, Rocket } from 'lucide-react';
-import { getToken } from '@/lib/auth-client';
+import { getToken, isLoggedIn } from '@/lib/auth-client';
 
 const INTERVIEW_TYPES = [
   {
@@ -42,6 +42,12 @@ export default function SetupPage() {
   const [isLaunching, setIsLaunching] = useState(false);
 
   const handleLaunch = async () => {
+    if (!isLoggedIn()) {
+      alert('Please sign up or log in to launch an interview.');
+      router.push('/signup');
+      return;
+    }
+
     setIsLaunching(true);
     try {
       const token = getToken();
