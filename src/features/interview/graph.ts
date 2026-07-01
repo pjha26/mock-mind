@@ -84,7 +84,7 @@ async function evaluateAnswerNode(state: typeof InterviewStateAnnotation.State) 
     })
   );
 
-  const topicPool = TOPIC_POOLS[state.interviewType.toLowerCase()] || TOPIC_POOLS['behavioral'];
+  const topicPool = TOPIC_POOLS[state.interviewType] ?? TOPIC_POOLS['Behavioral'];
 
   const prompt = `You are evaluating a candidate's answer in a ${state.interviewType} interview for the role of ${state.jobRole}.
 Evaluate the candidate's last answer based on depth, clarity, and relevance.

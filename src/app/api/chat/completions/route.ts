@@ -4,25 +4,7 @@ import { NextResponse } from 'next/server';
 import { interviewGraph } from '../../../../features/interview/graph';
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
 
-// Fallback config extraction if Vapi doesn't send variableValues properly
-function extractFallbackConfigFromSystemMessage(messages: any[]): { interviewType: string; jobRole: string } {
-  const systemMsg = messages.find((m: any) => m.role === 'system');
-  let interviewType = 'Behavioral';
-  let jobRole = 'Software Engineer';
 
-  if (systemMsg?.content) {
-    const content = systemMsg.content as string;
-    
-    // Try to extract interview type (Technical, Behavioral, System Design, HR / Culture Fit)
-    const typeMatch = content.match(/\b(Technical|Behavioral|System Design|HR \/ Culture Fit)\b/i);
-    if (typeMatch) interviewType = typeMatch[1];
-
-    // Try to extract job role
-    const roleMatch = content.match(/(?:for a|for the|as a|as an)\s+(.+?)\s+(?:candidate|position|role|interview)/i);
-    if (roleMatch) jobRole = roleMatch[1];
-  }
-  return { interviewType, jobRole };
-}
 
 export async function POST(req: Request) {
   try {
@@ -34,21 +16,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid messages array' }, { status: 400 });
     }
 
-    // Attempt to extract structured fields directly from the Vapi Custom LLM payload
-    // Vapi can send this in body.call.variableValues or body.message.call.variableValues
-    const vapiCall = body.call || body.message?.call;
-    const vapiVars = vapiCall?.variableValues || body.variableValues || {};
-    
-    const interviewId = vapiVars.interviewId;
-    let interviewType = vapiVars.interviewType;
-    let jobRole = vapiVars.jobRole;
+    const interviewType = body?.assistant?.variableValues?.interviewType || 'Behavioral';
+    const jobRole = body?.assistant?.variableValues?.jobRole || 'Software Engineer';
+    const interviewId = body?.assistant?.variableValues?.interviewId || null;
 
-    // Fallback to regex ONLY if structural fields are missing
-    if (!interviewType || !jobRole) {
-      const fallback = extractFallbackConfigFromSystemMessage(messages);
-      interviewType = interviewType || fallback.interviewType;
-      jobRole = jobRole || fallback.jobRole;
-    }
+    console.log('Resolved interviewType:', interviewType, '| jobRole:', jobRole);
 
     const langChainMessages = messages
       .filter((m: any) => m.role !== 'system')
