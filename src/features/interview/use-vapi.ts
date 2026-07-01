@@ -33,7 +33,7 @@ export function useVapi(interviewId: string | null = null, interviewType = 'Beha
         });
       }, 1000);
     } else {
-      setTimeLeft(570);
+      setTimeout(() => setTimeLeft(570), 0);
     }
 
     return () => {

@@ -18,6 +18,42 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
   const [interviewId, setInterviewId] = useState<string | null>(unwrappedParams.id);
   const [isEnding, setIsEnding] = useState(false);
 
+  const handleStart = () => {
+    // Start the Vapi session
+    startInterview(interviewType, jobRole);
+  };
+
+  const handleEnd = async () => {
+    if (isEnding) return;
+    setIsEnding(true);
+    stopInterview();
+
+    const transcript = getTranscript();
+
+    // Save transcript to DB if we have an interview ID
+    if (interviewId && transcript.length > 0) {
+      try {
+        await fetch(`/api/interviews/${interviewId}/transcript`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript }),
+        });
+      } catch (err) {
+        console.warn('Failed to save transcript to DB:', err);
+      }
+
+      router.push(`/feedback?id=${interviewId}`);
+    } else if (!interviewId && transcript.length > 0) {
+      // Fallback: pass transcript via localStorage
+      localStorage.setItem('mockMindTranscript', JSON.stringify(transcript));
+      router.push('/feedback');
+    } else {
+      // If there's no transcript, we cannot generate a report
+      alert("Session ended before any conversation was recorded. Cannot generate feedback.");
+      router.push('/dashboard');
+    }
+  };
+
   // Add beforeunload listener to send beacon
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -34,7 +70,9 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
   // Auto-end when timer hits zero
   useEffect(() => {
     if (isSessionActive && timeLeft === 0 && !isEnding) {
-      handleEnd();
+      setTimeout(() => {
+        handleEnd();
+      }, 0);
     }
   }, [timeLeft, isSessionActive, isEnding]);
 
@@ -51,41 +89,7 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
     return 'text-zinc-300';
   };
 
-  const handleStart = () => {
-    // Start the Vapi session
-    startInterview(interviewType, jobRole);
-  };
 
-const handleEnd = async () => {
-  if (isEnding) return;
-  setIsEnding(true);
-  stopInterview();
-
-  const transcript = getTranscript();
-
-  // Save transcript to DB if we have an interview ID
-  if (interviewId && transcript.length > 0) {
-    try {
-      await fetch(`/api/interviews/${interviewId}/transcript`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript }),
-      });
-    } catch (err) {
-      console.warn('Failed to save transcript to DB:', err);
-    }
-
-    router.push(`/feedback?id=${interviewId}`);
-  } else if (!interviewId && transcript.length > 0) {
-    // Fallback: pass transcript via localStorage
-    localStorage.setItem('mockMindTranscript', JSON.stringify(transcript));
-    router.push('/feedback');
-  } else {
-    // If there's no transcript, we cannot generate a report
-    alert("Session ended before any conversation was recorded. Cannot generate feedback.");
-    router.push('/dashboard');
-  }
-};
 
 // 3 Distinct Orb States matching user request
 const getOrbStyles = () => {
