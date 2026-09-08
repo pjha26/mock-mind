@@ -140,14 +140,11 @@ exports.Prisma.InterviewScalarFieldEnum = {
   status: 'status',
   transcript: 'transcript',
   feedback: 'feedback',
-  topicsCovered: 'topicsCovered',
-  difficulty: 'difficulty',
-  consecutiveWeakCount: 'consecutiveWeakCount',
   startedAt: 'startedAt',
   endedAt: 'endedAt',
-  lastActivityAt: 'lastActivityAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  lastActivityAt: 'lastActivityAt'
 };
 
 exports.Prisma.SortOrder = {

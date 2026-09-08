@@ -1949,20 +1949,8 @@ export namespace Prisma {
 
   export type AggregateInterview = {
     _count: InterviewCountAggregateOutputType | null
-    _avg: InterviewAvgAggregateOutputType | null
-    _sum: InterviewSumAggregateOutputType | null
     _min: InterviewMinAggregateOutputType | null
     _max: InterviewMaxAggregateOutputType | null
-  }
-
-  export type InterviewAvgAggregateOutputType = {
-    difficulty: number | null
-    consecutiveWeakCount: number | null
-  }
-
-  export type InterviewSumAggregateOutputType = {
-    difficulty: number | null
-    consecutiveWeakCount: number | null
   }
 
   export type InterviewMinAggregateOutputType = {
@@ -1970,13 +1958,11 @@ export namespace Prisma {
     userId: string | null
     type: string | null
     status: string | null
-    difficulty: number | null
-    consecutiveWeakCount: number | null
     startedAt: Date | null
     endedAt: Date | null
-    lastActivityAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    lastActivityAt: Date | null
   }
 
   export type InterviewMaxAggregateOutputType = {
@@ -1984,13 +1970,11 @@ export namespace Prisma {
     userId: string | null
     type: string | null
     status: string | null
-    difficulty: number | null
-    consecutiveWeakCount: number | null
     startedAt: Date | null
     endedAt: Date | null
-    lastActivityAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    lastActivityAt: Date | null
   }
 
   export type InterviewCountAggregateOutputType = {
@@ -2000,40 +1984,25 @@ export namespace Prisma {
     status: number
     transcript: number
     feedback: number
-    topicsCovered: number
-    difficulty: number
-    consecutiveWeakCount: number
     startedAt: number
     endedAt: number
-    lastActivityAt: number
     createdAt: number
     updatedAt: number
+    lastActivityAt: number
     _all: number
   }
 
-
-  export type InterviewAvgAggregateInputType = {
-    difficulty?: true
-    consecutiveWeakCount?: true
-  }
-
-  export type InterviewSumAggregateInputType = {
-    difficulty?: true
-    consecutiveWeakCount?: true
-  }
 
   export type InterviewMinAggregateInputType = {
     id?: true
     userId?: true
     type?: true
     status?: true
-    difficulty?: true
-    consecutiveWeakCount?: true
     startedAt?: true
     endedAt?: true
-    lastActivityAt?: true
     createdAt?: true
     updatedAt?: true
+    lastActivityAt?: true
   }
 
   export type InterviewMaxAggregateInputType = {
@@ -2041,13 +2010,11 @@ export namespace Prisma {
     userId?: true
     type?: true
     status?: true
-    difficulty?: true
-    consecutiveWeakCount?: true
     startedAt?: true
     endedAt?: true
-    lastActivityAt?: true
     createdAt?: true
     updatedAt?: true
+    lastActivityAt?: true
   }
 
   export type InterviewCountAggregateInputType = {
@@ -2057,14 +2024,11 @@ export namespace Prisma {
     status?: true
     transcript?: true
     feedback?: true
-    topicsCovered?: true
-    difficulty?: true
-    consecutiveWeakCount?: true
     startedAt?: true
     endedAt?: true
-    lastActivityAt?: true
     createdAt?: true
     updatedAt?: true
+    lastActivityAt?: true
     _all?: true
   }
 
@@ -2106,18 +2070,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: InterviewAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: InterviewSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: InterviewMinAggregateInputType
@@ -2148,8 +2100,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: InterviewCountAggregateInputType | true
-    _avg?: InterviewAvgAggregateInputType
-    _sum?: InterviewSumAggregateInputType
     _min?: InterviewMinAggregateInputType
     _max?: InterviewMaxAggregateInputType
   }
@@ -2161,17 +2111,12 @@ export namespace Prisma {
     status: string
     transcript: JsonValue | null
     feedback: JsonValue | null
-    topicsCovered: JsonValue | null
-    difficulty: number
-    consecutiveWeakCount: number
     startedAt: Date
     endedAt: Date | null
-    lastActivityAt: Date
     createdAt: Date
     updatedAt: Date
+    lastActivityAt: Date
     _count: InterviewCountAggregateOutputType | null
-    _avg: InterviewAvgAggregateOutputType | null
-    _sum: InterviewSumAggregateOutputType | null
     _min: InterviewMinAggregateOutputType | null
     _max: InterviewMaxAggregateOutputType | null
   }
@@ -2197,14 +2142,11 @@ export namespace Prisma {
     status?: boolean
     transcript?: boolean
     feedback?: boolean
-    topicsCovered?: boolean
-    difficulty?: boolean
-    consecutiveWeakCount?: boolean
     startedAt?: boolean
     endedAt?: boolean
-    lastActivityAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastActivityAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["interview"]>
 
@@ -2215,14 +2157,11 @@ export namespace Prisma {
     status?: boolean
     transcript?: boolean
     feedback?: boolean
-    topicsCovered?: boolean
-    difficulty?: boolean
-    consecutiveWeakCount?: boolean
     startedAt?: boolean
     endedAt?: boolean
-    lastActivityAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastActivityAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["interview"]>
 
@@ -2233,14 +2172,11 @@ export namespace Prisma {
     status?: boolean
     transcript?: boolean
     feedback?: boolean
-    topicsCovered?: boolean
-    difficulty?: boolean
-    consecutiveWeakCount?: boolean
     startedAt?: boolean
     endedAt?: boolean
-    lastActivityAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastActivityAt?: boolean
   }
 
   export type InterviewInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2262,14 +2198,11 @@ export namespace Prisma {
       status: string
       transcript: Prisma.JsonValue | null
       feedback: Prisma.JsonValue | null
-      topicsCovered: Prisma.JsonValue | null
-      difficulty: number
-      consecutiveWeakCount: number
       startedAt: Date
       endedAt: Date | null
-      lastActivityAt: Date
       createdAt: Date
       updatedAt: Date
+      lastActivityAt: Date
     }, ExtArgs["result"]["interview"]>
     composites: {}
   }
@@ -2670,14 +2603,11 @@ export namespace Prisma {
     readonly status: FieldRef<"Interview", 'String'>
     readonly transcript: FieldRef<"Interview", 'Json'>
     readonly feedback: FieldRef<"Interview", 'Json'>
-    readonly topicsCovered: FieldRef<"Interview", 'Json'>
-    readonly difficulty: FieldRef<"Interview", 'Int'>
-    readonly consecutiveWeakCount: FieldRef<"Interview", 'Int'>
     readonly startedAt: FieldRef<"Interview", 'DateTime'>
     readonly endedAt: FieldRef<"Interview", 'DateTime'>
-    readonly lastActivityAt: FieldRef<"Interview", 'DateTime'>
     readonly createdAt: FieldRef<"Interview", 'DateTime'>
     readonly updatedAt: FieldRef<"Interview", 'DateTime'>
+    readonly lastActivityAt: FieldRef<"Interview", 'DateTime'>
   }
     
 
@@ -3045,14 +2975,11 @@ export namespace Prisma {
     status: 'status',
     transcript: 'transcript',
     feedback: 'feedback',
-    topicsCovered: 'topicsCovered',
-    difficulty: 'difficulty',
-    consecutiveWeakCount: 'consecutiveWeakCount',
     startedAt: 'startedAt',
     endedAt: 'endedAt',
-    lastActivityAt: 'lastActivityAt',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    lastActivityAt: 'lastActivityAt'
   };
 
   export type InterviewScalarFieldEnum = (typeof InterviewScalarFieldEnum)[keyof typeof InterviewScalarFieldEnum]
@@ -3151,20 +3078,6 @@ export namespace Prisma {
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
   /**
    * Deep Input Types
    */
@@ -3250,14 +3163,11 @@ export namespace Prisma {
     status?: StringFilter<"Interview"> | string
     transcript?: JsonNullableFilter<"Interview">
     feedback?: JsonNullableFilter<"Interview">
-    topicsCovered?: JsonNullableFilter<"Interview">
-    difficulty?: IntFilter<"Interview"> | number
-    consecutiveWeakCount?: IntFilter<"Interview"> | number
     startedAt?: DateTimeFilter<"Interview"> | Date | string
     endedAt?: DateTimeNullableFilter<"Interview"> | Date | string | null
-    lastActivityAt?: DateTimeFilter<"Interview"> | Date | string
     createdAt?: DateTimeFilter<"Interview"> | Date | string
     updatedAt?: DateTimeFilter<"Interview"> | Date | string
+    lastActivityAt?: DateTimeFilter<"Interview"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
   }
 
@@ -3268,14 +3178,11 @@ export namespace Prisma {
     status?: SortOrder
     transcript?: SortOrderInput | SortOrder
     feedback?: SortOrderInput | SortOrder
-    topicsCovered?: SortOrderInput | SortOrder
-    difficulty?: SortOrder
-    consecutiveWeakCount?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrderInput | SortOrder
-    lastActivityAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastActivityAt?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -3289,14 +3196,11 @@ export namespace Prisma {
     status?: StringFilter<"Interview"> | string
     transcript?: JsonNullableFilter<"Interview">
     feedback?: JsonNullableFilter<"Interview">
-    topicsCovered?: JsonNullableFilter<"Interview">
-    difficulty?: IntFilter<"Interview"> | number
-    consecutiveWeakCount?: IntFilter<"Interview"> | number
     startedAt?: DateTimeFilter<"Interview"> | Date | string
     endedAt?: DateTimeNullableFilter<"Interview"> | Date | string | null
-    lastActivityAt?: DateTimeFilter<"Interview"> | Date | string
     createdAt?: DateTimeFilter<"Interview"> | Date | string
     updatedAt?: DateTimeFilter<"Interview"> | Date | string
+    lastActivityAt?: DateTimeFilter<"Interview"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
   }, "id">
 
@@ -3307,19 +3211,14 @@ export namespace Prisma {
     status?: SortOrder
     transcript?: SortOrderInput | SortOrder
     feedback?: SortOrderInput | SortOrder
-    topicsCovered?: SortOrderInput | SortOrder
-    difficulty?: SortOrder
-    consecutiveWeakCount?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrderInput | SortOrder
-    lastActivityAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastActivityAt?: SortOrder
     _count?: InterviewCountOrderByAggregateInput
-    _avg?: InterviewAvgOrderByAggregateInput
     _max?: InterviewMaxOrderByAggregateInput
     _min?: InterviewMinOrderByAggregateInput
-    _sum?: InterviewSumOrderByAggregateInput
   }
 
   export type InterviewScalarWhereWithAggregatesInput = {
@@ -3332,14 +3231,11 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"Interview"> | string
     transcript?: JsonNullableWithAggregatesFilter<"Interview">
     feedback?: JsonNullableWithAggregatesFilter<"Interview">
-    topicsCovered?: JsonNullableWithAggregatesFilter<"Interview">
-    difficulty?: IntWithAggregatesFilter<"Interview"> | number
-    consecutiveWeakCount?: IntWithAggregatesFilter<"Interview"> | number
     startedAt?: DateTimeWithAggregatesFilter<"Interview"> | Date | string
     endedAt?: DateTimeNullableWithAggregatesFilter<"Interview"> | Date | string | null
-    lastActivityAt?: DateTimeWithAggregatesFilter<"Interview"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"Interview"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Interview"> | Date | string
+    lastActivityAt?: DateTimeWithAggregatesFilter<"Interview"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -3429,14 +3325,11 @@ export namespace Prisma {
     status: string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: number
-    consecutiveWeakCount?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
-    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastActivityAt?: Date | string
     user: UserCreateNestedOneWithoutInterviewsInput
   }
 
@@ -3447,14 +3340,11 @@ export namespace Prisma {
     status: string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: number
-    consecutiveWeakCount?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
-    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastActivityAt?: Date | string
   }
 
   export type InterviewUpdateInput = {
@@ -3463,14 +3353,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: IntFieldUpdateOperationsInput | number
-    consecutiveWeakCount?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutInterviewsNestedInput
   }
 
@@ -3481,14 +3368,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: IntFieldUpdateOperationsInput | number
-    consecutiveWeakCount?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InterviewCreateManyInput = {
@@ -3498,14 +3382,11 @@ export namespace Prisma {
     status: string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: number
-    consecutiveWeakCount?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
-    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastActivityAt?: Date | string
   }
 
   export type InterviewUpdateManyMutationInput = {
@@ -3514,14 +3395,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: IntFieldUpdateOperationsInput | number
-    consecutiveWeakCount?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InterviewUncheckedUpdateManyInput = {
@@ -3531,14 +3409,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: IntFieldUpdateOperationsInput | number
-    consecutiveWeakCount?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -3702,17 +3577,6 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -3736,19 +3600,11 @@ export namespace Prisma {
     status?: SortOrder
     transcript?: SortOrder
     feedback?: SortOrder
-    topicsCovered?: SortOrder
-    difficulty?: SortOrder
-    consecutiveWeakCount?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrder
-    lastActivityAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type InterviewAvgOrderByAggregateInput = {
-    difficulty?: SortOrder
-    consecutiveWeakCount?: SortOrder
+    lastActivityAt?: SortOrder
   }
 
   export type InterviewMaxOrderByAggregateInput = {
@@ -3756,13 +3612,11 @@ export namespace Prisma {
     userId?: SortOrder
     type?: SortOrder
     status?: SortOrder
-    difficulty?: SortOrder
-    consecutiveWeakCount?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrder
-    lastActivityAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastActivityAt?: SortOrder
   }
 
   export type InterviewMinOrderByAggregateInput = {
@@ -3770,18 +3624,11 @@ export namespace Prisma {
     userId?: SortOrder
     type?: SortOrder
     status?: SortOrder
-    difficulty?: SortOrder
-    consecutiveWeakCount?: SortOrder
     startedAt?: SortOrder
     endedAt?: SortOrder
-    lastActivityAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type InterviewSumOrderByAggregateInput = {
-    difficulty?: SortOrder
-    consecutiveWeakCount?: SortOrder
+    lastActivityAt?: SortOrder
   }
   export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
     | PatchUndefined<
@@ -3807,22 +3654,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -3897,14 +3728,6 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutInterviewsInput, UserUncheckedCreateWithoutInterviewsInput>
     connectOrCreate?: UserCreateOrConnectWithoutInterviewsInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -4061,33 +3884,6 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -4108,14 +3904,11 @@ export namespace Prisma {
     status: string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: number
-    consecutiveWeakCount?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
-    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastActivityAt?: Date | string
   }
 
   export type InterviewUncheckedCreateWithoutUserInput = {
@@ -4124,14 +3917,11 @@ export namespace Prisma {
     status: string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: number
-    consecutiveWeakCount?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
-    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastActivityAt?: Date | string
   }
 
   export type InterviewCreateOrConnectWithoutUserInput = {
@@ -4170,14 +3960,11 @@ export namespace Prisma {
     status?: StringFilter<"Interview"> | string
     transcript?: JsonNullableFilter<"Interview">
     feedback?: JsonNullableFilter<"Interview">
-    topicsCovered?: JsonNullableFilter<"Interview">
-    difficulty?: IntFilter<"Interview"> | number
-    consecutiveWeakCount?: IntFilter<"Interview"> | number
     startedAt?: DateTimeFilter<"Interview"> | Date | string
     endedAt?: DateTimeNullableFilter<"Interview"> | Date | string | null
-    lastActivityAt?: DateTimeFilter<"Interview"> | Date | string
     createdAt?: DateTimeFilter<"Interview"> | Date | string
     updatedAt?: DateTimeFilter<"Interview"> | Date | string
+    lastActivityAt?: DateTimeFilter<"Interview"> | Date | string
   }
 
   export type UserCreateWithoutInterviewsInput = {
@@ -4246,14 +4033,11 @@ export namespace Prisma {
     status: string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: number
-    consecutiveWeakCount?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
-    lastActivityAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastActivityAt?: Date | string
   }
 
   export type InterviewUpdateWithoutUserInput = {
@@ -4262,14 +4046,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: IntFieldUpdateOperationsInput | number
-    consecutiveWeakCount?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InterviewUncheckedUpdateWithoutUserInput = {
@@ -4278,14 +4059,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: IntFieldUpdateOperationsInput | number
-    consecutiveWeakCount?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InterviewUncheckedUpdateManyWithoutUserInput = {
@@ -4294,14 +4072,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     transcript?: NullableJsonNullValueInput | InputJsonValue
     feedback?: NullableJsonNullValueInput | InputJsonValue
-    topicsCovered?: NullableJsonNullValueInput | InputJsonValue
-    difficulty?: IntFieldUpdateOperationsInput | number
-    consecutiveWeakCount?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastActivityAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 
