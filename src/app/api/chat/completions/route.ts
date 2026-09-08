@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { interviewGraph } from '../../../../features/interview/graph';
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
-
+import prisma from '../../../../lib/prisma';
 
 
 export async function POST(req: Request) {
@@ -31,16 +31,34 @@ export async function POST(req: Request) {
         return new HumanMessage(m.content);
       });
 
+    let dbTopicsCovered: string[] = [];
+    let dbDifficulty = 1;
+    let dbConsecutiveWeakCount = 0;
+
+    if (interviewId) {
+      const interview = await prisma.interview.findUnique({
+        where: { id: interviewId },
+        select: { topicsCovered: true, difficulty: true, consecutiveWeakCount: true }
+      });
+      if (interview) {
+        if (Array.isArray(interview.topicsCovered)) {
+          dbTopicsCovered = interview.topicsCovered as string[];
+        }
+        dbDifficulty = interview.difficulty ?? 1;
+        dbConsecutiveWeakCount = interview.consecutiveWeakCount ?? 0;
+      }
+    }
+
     const initialState = {
       messages: langChainMessages,
       jobRole,
       interviewType,
       experienceLevel,
-      difficulty: 1,
+      difficulty: dbDifficulty,
       currentStrategy: 'next_question',
       evaluationNote: '',
-      topicsCovered: [],
-      consecutiveWeakCount: 0,
+      topicsCovered: dbTopicsCovered,
+      consecutiveWeakCount: dbConsecutiveWeakCount,
       shouldWrapUp: false,
       currentTopicBeingDiscussed: '',
     };
@@ -52,14 +70,17 @@ export async function POST(req: Request) {
       const finalState = await interviewGraph.invoke(initialState);
       finalMessage = finalState.messages[finalState.messages.length - 1];
 
-      // Update lastActivityAt in the background
+      // Update state in the background
       if (interviewId) {
-        import('../../../../lib/prisma').then(({ default: prisma }) => {
-          prisma.interview.update({
-            where: { id: interviewId },
-            data: { lastActivityAt: new Date() }
-          }).catch(e => console.error('Failed to update lastActivityAt', e));
-        });
+        prisma.interview.update({
+          where: { id: interviewId },
+          data: { 
+            lastActivityAt: new Date(),
+            topicsCovered: finalState.topicsCovered,
+            difficulty: finalState.difficulty,
+            consecutiveWeakCount: finalState.consecutiveWeakCount
+          }
+        }).catch((e: any) => console.error('Failed to update interview state', e));
       }
 
     } catch (llmError: any) {

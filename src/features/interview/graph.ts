@@ -235,9 +235,19 @@ CRITICAL RULES:
 6. Do NOT mention out loud that you are changing topics or picking from a list. Transition naturally.`;
   }
 
+  // Implement a windowing strategy to avoid unbounded context length
+  // Always include the first message (opening) and the last ~10 messages
+  let messagesToInclude = state.messages;
+  if (state.messages.length > 12) {
+    messagesToInclude = [
+      state.messages[0], // Keep initial opening question context
+      ...state.messages.slice(-10) // Keep recent conversation
+    ];
+  }
+
   const response = await generationModel.invoke([
     new SystemMessage(prompt),
-    ...state.messages
+    ...messagesToInclude
   ]);
 
   return {
