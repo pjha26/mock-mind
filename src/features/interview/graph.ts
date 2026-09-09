@@ -4,6 +4,7 @@ import { HumanMessage, SystemMessage, AIMessage } from '@langchain/core/messages
 import { StructuredOutputParser } from '@langchain/core/output_parsers';
 import { z } from 'zod';
 import logger from '../../utils/logger';
+import prisma from '../../lib/prisma';
 
 // Topic pools per interview type
 const TOPIC_POOLS: Record<string, string[]> = {
@@ -33,6 +34,7 @@ const TOPIC_POOLS: Record<string, string[]> = {
 // 1. Define State
 export const InterviewStateAnnotation = Annotation.Root({
   ...MessagesAnnotation.spec,
+  interviewId: Annotation<string | null>(),
   jobRole: Annotation<string>(),
   interviewType: Annotation<string>(),
   experienceLevel: Annotation<string>(),
@@ -68,7 +70,7 @@ const primaryEvaluationModel = new ChatGroq({
 });
 const fallbackEvaluationModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama-3.3-70b-versatile',
+  model: 'llama-3.1-8b-instant',
   temperature: 0.1,
 });
 const evaluationModel = primaryEvaluationModel.withFallbacks({
@@ -96,6 +98,9 @@ async function evaluateAnswerNode(state: typeof InterviewStateAnnotation.State) 
   const parser = StructuredOutputParser.fromZodSchema(
     z.object({
       evaluation: z.enum(['strong', 'weak', 'vague', 'incomplete', 'excellent']),
+      clarityScore: z.number().min(1).max(5).describe('Numeric score for clarity, 1 to 5.'),
+      depthScore: z.number().min(1).max(5).describe('Numeric score for depth, 1 to 5.'),
+      relevanceScore: z.number().min(1).max(5).describe('Numeric score for relevance, 1 to 5.'),
       reasoning: z.string(),
       topicDiscussed: z.string().describe('The broad interview topic this exchange was about, e.g. "Leadership & Initiative" or "System Design & Architecture". Pick the closest match from the topic pool.'),
     })
@@ -104,7 +109,7 @@ async function evaluateAnswerNode(state: typeof InterviewStateAnnotation.State) 
   const topicPool = TOPIC_POOLS[state.interviewType] ?? TOPIC_POOLS['Behavioral'];
 
   const prompt = `You are evaluating a candidate's answer in a ${state.interviewType} interview for the role of ${state.jobRole}.
-Evaluate the candidate's last answer based on depth, clarity, and relevance.
+Evaluate the candidate's last answer based on depth, clarity, and relevance. Provide numeric scores from 1-5 for clarityScore, depthScore, and relevanceScore.
 Also identify which topic from this pool the answer was about: ${topicPool.join(', ')}.
 ${parser.getFormatInstructions()}`;
 
@@ -115,6 +120,27 @@ ${parser.getFormatInstructions()}`;
 
   try {
     const parsed = await parser.parse(response.content as string);
+
+    // Async DB persistence without blocking
+    if (state.interviewId) {
+      const answerText = state.messages.length > 0 ? state.messages[state.messages.length - 1].content.toString() : '';
+      const questionText = state.messages.length > 1 ? state.messages[state.messages.length - 2].content.toString() : '';
+      
+      prisma.answerEvaluation.create({
+        data: {
+          interviewId: state.interviewId,
+          questionText,
+          answerText,
+          evaluation: parsed.evaluation,
+          clarityScore: parsed.clarityScore,
+          depthScore: parsed.depthScore,
+          relevanceScore: parsed.relevanceScore,
+          reasoning: parsed.reasoning,
+          topicDiscussed: parsed.topicDiscussed,
+        }
+      }).catch(e => logger.error('Failed to save answer evaluation to DB', { error: e }));
+    }
+
     return {
       evaluationNote: parsed.evaluation,
       currentTopicBeingDiscussed: parsed.topicDiscussed,

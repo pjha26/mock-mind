@@ -51,6 +51,7 @@ export async function POST(req: Request) {
 
     const initialState = {
       messages: langChainMessages,
+      interviewId,
       jobRole,
       interviewType,
       experienceLevel,

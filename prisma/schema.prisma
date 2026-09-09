@@ -21,6 +21,21 @@ model User {
   interviews      Interview[]
 }
 
+model AnswerEvaluation {
+  id              String    @id @default(uuid())
+  interviewId     String
+  questionText    String
+  answerText      String
+  evaluation      String
+  clarityScore    Int
+  depthScore      Int
+  relevanceScore  Int
+  reasoning       String
+  topicDiscussed  String
+  createdAt       DateTime  @default(now())
+  interview       Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+}
+
 model Interview {
   id             String    @id @default(uuid())
   userId         String
@@ -37,4 +52,5 @@ model Interview {
   updatedAt      DateTime  @updatedAt
   lastActivityAt DateTime  @default(now())
   user           User      @relation(fields: [userId], references: [id])
+  answerEvaluations AnswerEvaluation[]
 }

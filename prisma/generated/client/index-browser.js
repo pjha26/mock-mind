@@ -133,6 +133,20 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AnswerEvaluationScalarFieldEnum = {
+  id: 'id',
+  interviewId: 'interviewId',
+  questionText: 'questionText',
+  answerText: 'answerText',
+  evaluation: 'evaluation',
+  clarityScore: 'clarityScore',
+  depthScore: 'depthScore',
+  relevanceScore: 'relevanceScore',
+  reasoning: 'reasoning',
+  topicDiscussed: 'topicDiscussed',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.InterviewScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -179,6 +193,7 @@ exports.Prisma.JsonNullValueFilter = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  AnswerEvaluation: 'AnswerEvaluation',
   Interview: 'Interview'
 };
 
