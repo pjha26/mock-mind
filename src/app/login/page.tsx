@@ -32,14 +32,14 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error?.message || 'Login failed');
+        throw new Error(data.error || 'Login failed');
       }
 
       if (data.data?.token) {
         setToken(data.data.token);
       }
       
-      router.push('/setup');
+      window.location.href = '/dashboard';
     } catch (err: any) {
       setError(err.message || 'An error occurred during login');
     } finally {

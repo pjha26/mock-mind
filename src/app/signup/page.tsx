@@ -42,7 +42,7 @@ export default function SignupPage() {
         setToken(data.data.token);
       }
       
-      router.push('/setup');
+      window.location.href = '/dashboard';
     } catch (err: any) {
       setError(err.message || 'An error occurred during signup');
     } finally {
