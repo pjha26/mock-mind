@@ -3,17 +3,23 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Querying the database to check if topicsCovered, difficulty, and consecutiveWeakCount exist on Interview...');
+  console.log('\n--- VERIFICATION SCRIPT ---');
   try {
-    // We will do a raw query to check the columns of the Interview table
+    // 1. Get Row Counts
+    const userCount = await prisma.user.count();
+    const interviewCount = await prisma.interview.count();
+    console.log(`Row counts -> Users: ${userCount}, Interviews: ${interviewCount}`);
+
+    // 2. Check Columns
+    console.log('Querying the database to check if topicsCovered, difficulty, and consecutiveWeakCount exist on Interview...');
     const columns = await prisma.$queryRaw`
       SELECT column_name 
       FROM information_schema.columns 
       WHERE table_name = 'Interview';
     `;
     
-    console.log('Columns in Interview table:');
     const columnNames = columns.map(c => c.column_name);
+    console.log('Columns in Interview table:');
     console.log(columnNames);
     
     const missing = [];
