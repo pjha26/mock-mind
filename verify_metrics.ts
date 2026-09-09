@@ -30,6 +30,10 @@ async function run() {
   });
 
   console.log('============================================');
+  console.log('TOKEN=', token);
+  console.log('INTERVIEW_ID=', interviewId);
+  console.log('============================================');
+
   console.log(`TESTING GET /api/interviews/${interviewId}/metrics`);
   const metricsRes = await getMetrics(req, { params: Promise.resolve({ id: interviewId }) });
   const metricsJson = await metricsRes.json();

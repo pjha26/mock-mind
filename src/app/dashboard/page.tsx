@@ -9,10 +9,11 @@ import { getToken } from '@/lib/auth-client';
 export default function DashboardPage() {
   const router = useRouter();
   const [pastInterviews, setPastInterviews] = useState<any[]>([]);
+  const [analytics, setAnalytics] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchInterviews = async () => {
+    const fetchData = async () => {
       try {
         const token = getToken();
         if (!token) {
@@ -20,16 +21,20 @@ export default function DashboardPage() {
           return;
         }
 
-        const res = await fetch('/api/interviews', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const [interviewsRes, analyticsRes] = await Promise.all([
+          fetch('/api/interviews', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/analytics/overview', { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
 
-        if (!res.ok) throw new Error('Failed to fetch interviews');
+        if (!interviewsRes.ok) throw new Error('Failed to fetch interviews');
         
-        const data = await res.json();
+        const data = await interviewsRes.json();
         setPastInterviews(data.interviews || []);
+
+        if (analyticsRes.ok) {
+          const analyticsData = await analyticsRes.json();
+          setAnalytics(analyticsData);
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -37,7 +42,7 @@ export default function DashboardPage() {
       }
     };
 
-    fetchInterviews();
+    fetchData();
   }, [router]);
 
   return (
@@ -55,6 +60,54 @@ export default function DashboardPage() {
             </button>
           </Link>
         </header>
+
+        {/* Analytics Overview Section */}
+        {!isLoading && analytics && (
+          <section className="space-y-6">
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <FileText className="w-5 h-5 text-emerald-500" />
+              Performance Overview
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-6 border border-neutral-800 rounded-2xl bg-neutral-900">
+                <h3 className="text-neutral-400 text-sm font-medium mb-2">Total Evaluations</h3>
+                <p className="text-3xl font-bold">{analytics.totalEvaluationsRecorded}</p>
+              </div>
+              <div className="p-6 border border-neutral-800 rounded-2xl bg-neutral-900">
+                <h3 className="text-neutral-400 text-sm font-medium mb-2">Average Scores</h3>
+                <div className="flex justify-between items-end mt-2">
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-emerald-400">{analytics.averageScoresAcrossAllInterviews.clarity}</div>
+                    <div className="text-xs text-neutral-500">Clarity</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-blue-400">{analytics.averageScoresAcrossAllInterviews.depth}</div>
+                    <div className="text-xs text-neutral-500">Depth</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-purple-400">{analytics.averageScoresAcrossAllInterviews.relevance}</div>
+                    <div className="text-xs text-neutral-500">Relevance</div>
+                  </div>
+                </div>
+              </div>
+              <div className="p-6 border border-neutral-800 rounded-2xl bg-neutral-900 overflow-hidden">
+                <h3 className="text-neutral-400 text-sm font-medium mb-2">Common Weak Topics</h3>
+                {analytics.mostCommonWeakTopics?.length > 0 ? (
+                  <ul className="text-sm space-y-2 mt-2">
+                    {analytics.mostCommonWeakTopics.map((t: any, i: number) => (
+                      <li key={i} className="flex justify-between items-center">
+                        <span className="truncate pr-2 text-neutral-300">{t.topic}</span>
+                        <span className="text-red-400 font-medium shrink-0">{t.averageDepthScore}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-neutral-500 mt-2 italic">Not enough data yet</p>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="space-y-6">
           <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -83,7 +136,7 @@ export default function DashboardPage() {
                 const isAbandoned = interview.status === 'ABANDONED';
                 
                 const CardContent = (
-                  <div className={`p-6 border border-neutral-800 rounded-2xl bg-neutral-900 transition-colors group h-full flex flex-col ${isCompleted ? 'hover:border-emerald-500/50 cursor-pointer' : isAbandoned ? 'opacity-50 grayscale' : 'opacity-75'}`}>
+                  <div className={`p-6 border border-neutral-800 rounded-2xl bg-neutral-900 transition-colors group h-full flex flex-col ${isCompleted ? 'hover:border-emerald-500/50 cursor-pointer' : isAbandoned ? 'hover:border-neutral-700 cursor-pointer' : 'opacity-75'}`}>
                     <div className="flex justify-between items-start mb-4">
                       <span className={`px-3 py-1 text-sm font-medium rounded-full ${isCompleted ? 'bg-emerald-500/10 text-emerald-400' : isAbandoned ? 'bg-neutral-800 text-neutral-400' : 'bg-neutral-500/10 text-neutral-400'}`}>
                         {interview.type}
@@ -92,20 +145,21 @@ export default function DashboardPage() {
                         {new Date(interview.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <h3 className={`font-semibold mb-2 transition-colors ${isCompleted ? 'group-hover:text-emerald-400' : 'text-neutral-500'}`}>
+                    <h3 className={`font-semibold mb-2 transition-colors ${isCompleted ? 'group-hover:text-emerald-400' : 'text-neutral-300'}`}>
                       {isCompleted ? 'View Feedback Report' : isAbandoned ? 'Abandoned Session' : 'Incomplete Session'}
                     </h3>
-                    <p className="text-sm text-neutral-400 mt-auto">
+                    <p className="text-sm text-neutral-400 mt-auto mb-3">
                       Status: {interview.status}
                     </p>
+                    {(isCompleted || isAbandoned) && (
+                      <Link href={`/interviews/${interview.id}/metrics`} className="text-emerald-500 text-sm font-medium hover:underline inline-flex items-center">
+                        View Metrics <span className="ml-1">→</span>
+                      </Link>
+                    )}
                   </div>
                 );
 
-                return isCompleted ? (
-                  <Link href={`/feedback?id=${interview.id}`} key={interview.id}>
-                    {CardContent}
-                  </Link>
-                ) : (
+                return (
                   <div key={interview.id}>
                     {CardContent}
                   </div>
