@@ -65,12 +65,12 @@ export const InterviewStateAnnotation = Annotation.Root({
 // 2. Models
 const primaryEvaluationModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama-3.1-8b-instant',
+  model: 'qwen/qwen3.8-27b',
   temperature: 0.1,
 });
 const fallbackEvaluationModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama-3.1-8b-instant',
+  model: 'qwen/qwen3.8-27b',
   temperature: 0.1,
 });
 const evaluationModel = primaryEvaluationModel.withFallbacks({
@@ -79,7 +79,7 @@ const evaluationModel = primaryEvaluationModel.withFallbacks({
 
 const primaryGenerationModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama-3.1-8b-instant',
+  model: 'qwen/qwen3.8-27b',
   temperature: 0.7,
 });
 const fallbackGenerationModel = new ChatGroq({
@@ -123,8 +123,11 @@ ${parser.getFormatInstructions()}`;
 
     // Async DB persistence without blocking
     if (state.interviewId) {
-      const answerText = state.messages.length > 0 ? state.messages[state.messages.length - 1].content.toString() : '';
-      const questionText = state.messages.length > 1 ? state.messages[state.messages.length - 2].content.toString() : '';
+      const humanMsgs = state.messages.filter(m => m.getType() === 'human');
+      const aiMsgs = state.messages.filter(m => m.getType() === 'ai');
+      
+      const answerText = humanMsgs.length > 0 ? humanMsgs[humanMsgs.length - 1].content.toString() : '';
+      const questionText = aiMsgs.length > 0 ? aiMsgs[aiMsgs.length - 1].content.toString() : 'Initial Opening';
       
       prisma.answerEvaluation.create({
         data: {
