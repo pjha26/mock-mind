@@ -30,6 +30,18 @@ export async function createUser(data: { email: string; passwordHash: string; na
   }
 }
 
+export async function updateUserPassword(email: string, passwordHash: string) {
+  try {
+    return await prisma.user.update({
+      where: { email },
+      data: { passwordHash },
+    });
+  } catch (error) {
+    logger.error('Error updating password', { email, error });
+    throw error;
+  }
+}
+
 export async function hashPassword(password: string): Promise<string> {
   const salt = await bcrypt.genSalt(10);
   return bcrypt.hash(password, salt);
