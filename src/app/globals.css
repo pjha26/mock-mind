@@ -1,58 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap');
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
 
-body {
-  background-color: #0a0a0a;
-  color: #e5e2e1;
-  font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
+/* 
+ * Since Tailwind v4 might be used (due to @import "tailwindcss"),
+ * we map our variables if needed, though we primarily rely on the JS config.
+ * For true blacks and ambers, we use utility classes.
+ */
+
+@layer base {
+  :root {
+    --background: 0 0% 2%;
+    --foreground: 0 0% 98%;
+    --border: 0 0% 10%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary selection:text-white;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
 }
 
-/* Utility Classes matching Stitch design */
-.glow-blue {
-  box-shadow: 0 0 8px 0px rgba(59, 130, 246, 0.3);
+/* Typography Enhancements */
+.text-balance {
+  text-wrap: balance;
 }
 
-.hover\:glow-blue:hover {
-  box-shadow: 0 0 12px 2px rgba(59, 130, 246, 0.5);
-}
-
-.border-subtle {
-  border-color: #27272a;
-}
-
-.glass-panel {
-  background-color: rgba(24, 24, 27, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid #27272a;
-}
-
-.glass-card {
-  background: #131313;
-  border: 1px solid #424754;
-  transition: all 0.3s ease;
-}
-
-.glass-card:hover {
-  border-color: #8c909f;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.active-card {
-  border-color: #adc6ff !important;
-  box-shadow: 0 0 15px rgba(173, 198, 255, 0.2);
-}
-
-/* Material Symbols */
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
-.material-symbols-outlined.fill {
-  font-variation-settings: 'FILL' 1;
+/* Remove all generic AI glows, frosted glass, etc */
+/* Duotone image filter class */
+.duotone-amber-blue {
+  /* A CSS approximation of duotone using mix-blend-mode or SVG filters.
+     For best results, we will use a pseudo-element overlay in the components,
+     but here is a generic helper if needed. */
+  filter: contrast(1.2) sepia(1) hue-rotate(345deg) saturate(3);
 }
 
 /* Range Slider */
@@ -69,70 +52,13 @@ input[type=range]::-webkit-slider-thumb {
   height: 20px;
   width: 20px;
   border-radius: 50%;
-  background: #adc6ff;
+  background: #CC5500;
   cursor: pointer;
-  margin-top: -8px;
-  box-shadow: 0 0 10px rgba(173, 198, 255, 0.5);
-  transition: transform 0.2s;
-}
-
-input[type=range]::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
-
-input[type=range]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 4px;
-  cursor: pointer;
-  background: #2a2a2a;
-  border-radius: 2px;
-}
-
-input[type=range]:focus {
-  outline: none;
-}
-
-/* Glow Button */
-.glow-button {
-  transition: all 0.2s ease-in-out;
-}
-
-.glow-button:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 15px rgba(173, 198, 255, 0.4);
-}
-
-/* Mic Pulse Animation */
-.mic-pulse {
-  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 0 0 rgba(173, 198, 255, 0.4); }
-  70% { transform: scale(1.1); opacity: 0; box-shadow: 0 0 0 20px rgba(173, 198, 255, 0); }
-  100% { transform: scale(1); opacity: 0; box-shadow: 0 0 0 0 rgba(173, 198, 255, 0); }
-}
-
-.mic-active-inner {
-  animation: pulse-inner 2s ease-in-out infinite alternate;
-}
-
-@keyframes pulse-inner {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.05); }
-}
-
-/* Fade In Up Animation */
-.animate-fadeUp {
-  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0;
-  transform: translateY(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 @keyframes fadeUp {
   to { opacity: 1; transform: translateY(0); }
-}
-
 /* Breathing Orb Animation */
 @keyframes breathe {
   0%, 100% { transform: scale(1); opacity: 0.6; }

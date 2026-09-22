@@ -1,114 +1,196 @@
+"use client";
+
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'motion/react';
+import { ArrowRight } from 'lucide-react';
 import TopNavBar from '@/components/top-nav-bar';
 import Footer from '@/components/footer';
-import Link from 'next/link';
-import { ArrowRight, Mic, Brain, BarChart, CheckCircle2 } from 'lucide-react';
 
 export default function Home() {
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      }
+    }
+  };
+
+  const fadeUp = {
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } }
+  };
+
   return (
-    <div className="antialiased min-h-screen flex flex-col">
+    <div className="min-h-[100dvh] flex flex-col bg-[#050505] text-[#FAFAFA] font-sans selection:bg-[#CC5500] selection:text-white">
       <TopNavBar />
 
-      {/* Main Content Canvas */}
-      <main className="flex-grow flex flex-col relative pt-16">
-        {/* Hero Section */}
-        <section className="relative min-h-[calc(100vh-64px)] flex items-center justify-center overflow-hidden px-margin-mobile md:px-margin-desktop">
-          {/* Radial Background */}
-          <div className="absolute inset-0 z-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 70% 50%, rgba(59,130,246,0.08) 0%, transparent 60%)' }} />
-
-          <div className="relative z-10 max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-12 w-full">
-            {/* Hero Content */}
-            <div className="flex-1 flex flex-col items-start gap-8 py-20 md:py-0">
-              <h1 className="font-display-lg text-5xl md:text-6xl font-bold text-on-surface tracking-tight leading-tight animate-fadeUp">
-                Master the Art of the Interview.
-              </h1>
-              <p className="font-body-lg text-body-lg text-on-surface-variant max-w-xl text-lg md:text-xl animate-fadeUp delay-100">
-                Practice high-stakes conversations with an AI that feels human. Refine your narrative, overcome anxiety, and land your next role.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full sm:w-auto animate-fadeUp delay-200">
-                <Link href="/setup">
-                  <button className="bg-[#3b82f6] text-white px-8 py-4 rounded-lg font-title-md text-title-md transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] active:scale-95 flex items-center justify-center gap-3 group w-full sm:w-auto shadow-lg shadow-blue-500/20">
-                    Start Practicing
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </Link>
-              </div>
+      <main className="flex-grow flex flex-col pt-24 md:pt-32 relative">
+        
+        {/* HERO SECTION - Editorial Split */}
+        <section className="relative px-6 md:px-12 lg:px-24 max-w-[1400px] mx-auto w-full mb-32 md:mb-48">
+          <div className="flex flex-col md:flex-row items-center gap-16 md:gap-8">
+            
+            {/* Left: Typography Anchor */}
+            <motion.div 
+              className="w-full md:w-7/12 z-10 flex flex-col items-start"
+              variants={staggerContainer}
+              initial="hidden"
+              animate="show"
+            >
+              <motion.h1 
+                variants={fadeUp}
+                className="font-display text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[1.05] tracking-tight mb-8"
+              >
+                Elite <br className="hidden md:block"/> Talent.
+              </motion.h1>
               
-              {/* Trust badges */}
-              <div className="flex items-center gap-6 mt-8 opacity-70 animate-fadeUp delay-300">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#3b82f6]" />
-                  <span className="text-sm font-medium">Real-time voice AI</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#3b82f6]" />
-                  <span className="text-sm font-medium">Instant feedback</span>
-                </div>
-              </div>
-            </div>
+              <motion.p 
+                variants={fadeUp}
+                className="text-[#9CA3AF] text-lg md:text-xl max-w-[45ch] leading-relaxed mb-10"
+              >
+                Practice high-stakes technical conversations with an AI that feels human. Refine your narrative, overcome anxiety, and land the role you deserve.
+              </motion.p>
+              
+              <motion.div variants={fadeUp} className="flex items-center gap-6">
+                {/* Button-in-Button CTA Pattern */}
+                <Link href="/setup" className="group flex items-center bg-[#CC5500] text-white rounded-full pl-6 pr-2 py-2 hover:bg-[#E66000] transition-colors active:scale-[0.98]">
+                  <span className="font-semibold tracking-wide text-sm mr-4">BEGIN SESSION</span>
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center transition-transform group-hover:translate-x-1 group-hover:-translate-y-[1px] group-hover:scale-105">
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
+                </Link>
+              </motion.div>
+            </motion.div>
 
-            {/* Hero Visual (AI Orb) */}
-            <div className="flex-1 w-full max-w-md relative aspect-square flex items-center justify-center animate-fadeUp delay-200">
-              <div className="absolute inset-0 bg-[#3b82f6]/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '4s' }} />
-              <div className="relative w-full h-full z-10 glass-panel rounded-full overflow-hidden flex items-center justify-center border-subtle">
-                {/* AI Orb Visual - Breathing Animation */}
-                <div className="w-3/4 h-3/4 rounded-full bg-gradient-to-br from-[#3b82f6]/30 to-[#3b82f6]/5 border border-[#3b82f6]/30 flex items-center justify-center animate-breathe">
-                  <div className="w-1/2 h-1/2 rounded-full bg-[#3b82f6]/20" />
+            {/* Right: Duotone Editorial Image */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.2 }}
+              className="w-full md:w-5/12 relative"
+            >
+              <div className="relative aspect-[3/4] w-full max-w-md ml-auto">
+                {/* Constellation Motif overlay */}
+                <div className="absolute -left-12 top-1/4 w-24 h-[1px] bg-white/20 z-20 hidden md:block" />
+                <div className="absolute -left-12 top-1/4 w-1.5 h-1.5 rounded-full bg-[#FAFAFA] z-20 hidden md:block -translate-y-1/2" />
+                
+                <div className="absolute -right-8 bottom-1/3 w-16 h-[1px] bg-white/20 z-20 hidden md:block" />
+                <div className="absolute -right-8 bottom-1/3 w-1.5 h-1.5 rounded-full bg-[#FAFAFA] z-20 hidden md:block -translate-y-1/2" />
+                
+                {/* Image Container with Double-Bezel */}
+                <div className="w-full h-full rounded-[2rem] p-1.5 border border-white/10 bg-white/5 relative z-10">
+                  <div className="w-full h-full rounded-[calc(2rem-0.375rem)] overflow-hidden relative shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
+                    <Image 
+                      src="/hero_portrait.jpg" 
+                      alt="Candidate in focus" 
+                      fill 
+                      className="object-cover duotone-amber-blue opacity-90 scale-105" 
+                      priority
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80" />
+                  </div>
                 </div>
               </div>
+            </motion.div>
+
+          </div>
+        </section>
+
+        {/* NAKED METRICS SECTION */}
+        <section className="border-y border-white/10 relative">
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
+            <div className="p-12 md:p-16 flex flex-col justify-center">
+              <div className="font-display text-5xl md:text-6xl font-bold mb-4">85+</div>
+              <div className="text-xs font-mono text-[#9CA3AF] tracking-[0.1em] uppercase">Candidates Evaluated</div>
+            </div>
+            <div className="p-12 md:p-16 flex flex-col justify-center">
+              <div className="font-display text-5xl md:text-6xl font-bold mb-4">18<span className="text-3xl text-[#9CA3AF]">d</span></div>
+              <div className="text-xs font-mono text-[#9CA3AF] tracking-[0.1em] uppercase">Average Time to Hire</div>
+            </div>
+            <div className="p-12 md:p-16 flex flex-col justify-center">
+              <div className="font-display text-5xl md:text-6xl font-bold mb-4 text-[#CC5500]">96%</div>
+              <div className="text-xs font-mono text-[#9CA3AF] tracking-[0.1em] uppercase">Offer Acceptance</div>
             </div>
           </div>
         </section>
 
-        {/* Social Proof Section */}
-        <section className="py-12 border-y border-outline-variant/30 bg-surface-container-lowest/50 backdrop-blur-sm">
-          <div className="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop text-center">
-            <p className="text-sm font-medium text-on-surface-variant mb-8 tracking-widest uppercase">Trusted by professionals advancing their careers at top tier companies</p>
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale">
-              {/* Mock Logos (Text fallback for now) */}
-              <div className="text-xl font-bold tracking-tighter">Google</div>
-              <div className="text-xl font-bold tracking-tighter">Meta</div>
-              <div className="text-xl font-bold tracking-tighter">Stripe</div>
-              <div className="text-xl font-bold tracking-tighter">Netflix</div>
-              <div className="text-xl font-bold tracking-tighter">Amazon</div>
+        {/* ASYMMETRICAL FEATURE BENTO */}
+        <section className="py-32 px-6 md:px-12 lg:px-24 max-w-[1400px] mx-auto w-full">
+          <div className="mb-20 max-w-2xl">
+            <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight mb-6">Hiring Success Built <br/> on Precision</h2>
+            <p className="text-[#9CA3AF] text-lg leading-relaxed">
+              We replace subjective human bias with rigorous, high-fidelity technical evaluation.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            
+            {/* Massive left block */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6 }}
+              className="md:col-span-8 rounded-[2rem] border border-white/10 bg-[#111111] p-2 relative overflow-hidden"
+            >
+              <div className="rounded-[calc(2rem-0.5rem)] bg-[#1A1A1A] h-full p-8 md:p-12 min-h-[400px] flex flex-col justify-end relative shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-white/5">
+                {/* Abstract Constellation Visual inside card */}
+                <div className="absolute top-12 right-12 w-32 h-32 opacity-20 pointer-events-none">
+                  <svg viewBox="0 0 100 100" className="w-full h-full stroke-white fill-none stroke-[0.5]">
+                    <circle cx="20" cy="20" r="2" className="fill-white"/>
+                    <circle cx="80" cy="40" r="2" className="fill-white"/>
+                    <circle cx="50" cy="80" r="2" className="fill-white"/>
+                    <path d="M20 20 L80 40 L50 80 Z" />
+                  </svg>
+                </div>
+                
+                <h3 className="font-display text-2xl font-bold mb-4 z-10">Real-Time Voice AI</h3>
+                <p className="text-[#9CA3AF] max-w-md z-10">
+                  Engage in zero-latency spoken dialogue. The model adapts to your pacing, tone, and technical depth instantly.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Right stacked blocks */}
+            <div className="md:col-span-4 flex flex-col gap-6">
+              
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="flex-1 rounded-[2rem] border border-white/10 bg-[#111111] p-2"
+              >
+                <div className="rounded-[calc(2rem-0.5rem)] bg-[#1A1A1A] h-full p-8 flex flex-col justify-end shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-white/5">
+                  <h3 className="font-display text-xl font-bold mb-3">Dynamic Strategy</h3>
+                  <p className="text-[#9CA3AF] text-sm leading-relaxed">
+                    Questions evolve based on your previous answers. No static scripts, no predictable flows.
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="flex-1 rounded-[2rem] border border-white/10 bg-[#111111] p-2"
+              >
+                <div className="rounded-[calc(2rem-0.5rem)] bg-[#1A1A1A] h-full p-8 flex flex-col justify-end shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-white/5">
+                  <h3 className="font-display text-xl font-bold mb-3">Instant Feedback</h3>
+                  <p className="text-[#9CA3AF] text-sm leading-relaxed">
+                    Detailed breakdowns immediately post-session. Track improvement and master your narrative.
+                  </p>
+                </div>
+              </motion.div>
+
             </div>
           </div>
         </section>
 
-        {/* Feature Grid Section */}
-        <section className="py-24 px-margin-mobile md:px-margin-desktop relative z-10 bg-background">
-          <div className="max-w-[1200px] mx-auto">
-            <div className="mb-16 md:text-center max-w-2xl mx-auto">
-              <h2 className="font-display-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">Engineered for Perfection</h2>
-              <p className="font-body-lg text-body-lg text-on-surface-variant">A technical approach to human communication. High-fidelity feedback loop designed for high-achieving professionals.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Feature 1 */}
-              <div className="glass-panel p-8 rounded-xl flex flex-col gap-4 hover:-translate-y-1 transition-transform duration-300 group">
-                <div className="w-12 h-12 rounded-lg bg-surface flex items-center justify-center border border-subtle mb-2 group-hover:border-[#3b82f6] transition-colors">
-                  <Mic className="w-6 h-6 text-[#3b82f6]" />
-                </div>
-                <h3 className="font-display-lg text-title-md text-on-surface">Voice-First Interaction</h3>
-                <p className="font-body-md text-body-md text-on-surface-variant">Engage in real-time spoken dialogue. The AI detects tone, pacing, and filler words to provide comprehensive communication metrics.</p>
-              </div>
-              {/* Feature 2 */}
-              <div className="glass-panel p-8 rounded-xl flex flex-col gap-4 hover:-translate-y-1 transition-transform duration-300 group">
-                <div className="w-12 h-12 rounded-lg bg-surface flex items-center justify-center border border-subtle mb-2 group-hover:border-[#3b82f6] transition-colors">
-                  <Brain className="w-6 h-6 text-[#3b82f6]" />
-                </div>
-                <h3 className="font-display-lg text-title-md text-on-surface">Dynamic Strategy</h3>
-                <p className="font-body-md text-body-md text-on-surface-variant">The AI adapts its questioning based on your target role, company profile, and your previous responses. No two interviews are the same.</p>
-              </div>
-              {/* Feature 3 */}
-              <div className="glass-panel p-8 rounded-xl flex flex-col gap-4 hover:-translate-y-1 transition-transform duration-300 group">
-                <div className="w-12 h-12 rounded-lg bg-surface flex items-center justify-center border border-subtle mb-2 group-hover:border-[#3b82f6] transition-colors">
-                  <BarChart className="w-6 h-6 text-[#3b82f6]" />
-                </div>
-                <h3 className="font-display-lg text-title-md text-on-surface">Instant Feedback Reports</h3>
-                <p className="font-body-md text-body-md text-on-surface-variant">Receive a detailed breakdown immediately after your session. Identify weaknesses, track improvement over time, and master your narrative.</p>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
       <Footer />

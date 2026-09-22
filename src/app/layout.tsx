@@ -1,9 +1,22 @@
 import type { Metadata } from "next";
+import { Syne, Manrope } from "next/font/google";
 import "./globals.css";
 
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-syne",
+  display: "swap",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "InterviewAI - Master the Art of the Interview",
-  description: "Practice high-stakes conversations with an AI that feels human. Refine your narrative, overcome anxiety, and land your next role.",
+  title: "MockMind | Elite Talent",
+  description: "Rigorous, voice-based AI mock interviews.",
 };
 
 export default function RootLayout({
@@ -12,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark h-full antialiased">
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${syne.variable} ${manrope.variable} dark h-full antialiased`}>
+      <body className="min-h-full flex flex-col font-sans bg-[#050505] text-[#FAFAFA]">{children}</body>
     </html>
   );
 }
