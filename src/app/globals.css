@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@plugin "tailwindcss-animate";
 
 /* 
  * Since Tailwind v4 might be used (due to @import "tailwindcss"),
