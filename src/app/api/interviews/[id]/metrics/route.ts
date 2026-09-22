@@ -37,7 +37,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     };
     
     const topicDepthMap: Record<string, { totalDepth: number, count: number }> = {};
-    const scoreTrend = [];
+    const scoreTrend: Array<{ questionNumber: number; clarityScore: number; depthScore: number; relevanceScore: number }> = [];
 
     evaluations.forEach((ev, index) => {
       totalClarity += ev.clarityScore;
