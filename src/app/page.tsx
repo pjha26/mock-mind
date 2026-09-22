@@ -137,14 +137,15 @@ export default function Home() {
               className="md:col-span-8 rounded-[2rem] border border-white/10 bg-[#111111] p-2 relative overflow-hidden"
             >
               <div className="rounded-[calc(2rem-0.5rem)] bg-[#1A1A1A] h-full p-8 md:p-12 min-h-[400px] flex flex-col justify-end relative shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-white/5">
-                {/* Abstract Constellation Visual inside card */}
-                <div className="absolute top-12 right-12 w-32 h-32 opacity-20 pointer-events-none">
-                  <svg viewBox="0 0 100 100" className="w-full h-full stroke-white fill-none stroke-[0.5]">
-                    <circle cx="20" cy="20" r="2" className="fill-white"/>
-                    <circle cx="80" cy="40" r="2" className="fill-white"/>
-                    <circle cx="50" cy="80" r="2" className="fill-white"/>
-                    <path d="M20 20 L80 40 L50 80 Z" />
-                  </svg>
+                {/* Duotone Visual inside card */}
+                <div className="absolute inset-0 z-0">
+                  <Image 
+                    src="/feature_bg.jpg" 
+                    alt="Data visualization" 
+                    fill 
+                    className="object-cover duotone-amber-blue opacity-50 mix-blend-screen" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-[#1A1A1A]/80 to-transparent" />
                 </div>
                 
                 <h3 className="font-display text-2xl font-bold mb-4 z-10">Real-Time Voice AI</h3>
@@ -185,6 +186,84 @@ export default function Home() {
                     Detailed breakdowns immediately post-session. Track improvement and master your narrative.
                   </p>
                 </div>
+              </motion.div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* THE FLOW (CONSTELLATION PATH) */}
+        <section className="py-32 px-6 md:px-12 lg:px-24 max-w-[1400px] mx-auto w-full relative">
+          <div className="mb-24 text-center max-w-2xl mx-auto">
+            <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight mb-6">The Methodology</h2>
+            <p className="text-[#9CA3AF] text-lg leading-relaxed">
+              A systematic approach to perfecting your interview technique.
+            </p>
+          </div>
+
+          <div className="relative max-w-4xl mx-auto">
+            {/* The SVG Hairline Path */}
+            <div className="absolute top-8 bottom-8 left-[19px] md:left-1/2 md:-translate-x-1/2 w-[1px] bg-white/10 z-0" />
+            
+            <div className="space-y-24 relative z-10">
+              
+              {/* Step 1 */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-16"
+              >
+                <div className="hidden md:block md:w-1/2 text-right">
+                  <h3 className="font-display text-2xl font-bold mb-3">1. Select Target</h3>
+                  <p className="text-[#9CA3AF] text-sm leading-relaxed max-w-sm ml-auto">Define the role, seniority, and company archetype. The AI calibrates its expectations immediately.</p>
+                </div>
+                <div className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow-[0_0_15px_rgba(204,85,0,0.15)]">
+                  <div className="w-2 h-2 rounded-full bg-[#CC5500]" />
+                </div>
+                <div className="md:hidden w-full">
+                  <h3 className="font-display text-2xl font-bold mb-3">1. Select Target</h3>
+                  <p className="text-[#9CA3AF] text-sm leading-relaxed">Define the role, seniority, and company archetype. The AI calibrates its expectations immediately.</p>
+                </div>
+                <div className="hidden md:block md:w-1/2" />
+              </motion.div>
+
+              {/* Step 2 */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-16"
+              >
+                <div className="hidden md:block md:w-1/2" />
+                <div className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow-[0_0_15px_rgba(204,85,0,0.15)]">
+                  <div className="w-2 h-2 rounded-full bg-[#CC5500]" />
+                </div>
+                <div className="w-full md:w-1/2">
+                  <h3 className="font-display text-2xl font-bold mb-3">2. Voice Session</h3>
+                  <p className="text-[#9CA3AF] text-sm leading-relaxed max-w-sm">Engage in a live, high-fidelity technical conversation. No latency, no scripts, pure signal.</p>
+                </div>
+              </motion.div>
+
+              {/* Step 3 */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-16"
+              >
+                <div className="hidden md:block md:w-1/2 text-right">
+                  <h3 className="font-display text-2xl font-bold mb-3">3. Diagnostics</h3>
+                  <p className="text-[#9CA3AF] text-sm leading-relaxed max-w-sm ml-auto">Review your performance telemetry. Identify knowledge gaps, pacing issues, and narrative weakness instantly.</p>
+                </div>
+                <div className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow-[0_0_15px_rgba(204,85,0,0.15)]">
+                  <div className="w-2 h-2 rounded-full bg-[#CC5500]" />
+                </div>
+                <div className="md:hidden w-full">
+                  <h3 className="font-display text-2xl font-bold mb-3">3. Diagnostics</h3>
+                  <p className="text-[#9CA3AF] text-sm leading-relaxed">Review your performance telemetry. Identify knowledge gaps, pacing issues, and narrative weakness instantly.</p>
+                </div>
+                <div className="hidden md:block md:w-1/2" />
               </motion.div>
 
             </div>
