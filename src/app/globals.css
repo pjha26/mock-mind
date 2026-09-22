@@ -7,20 +7,19 @@
  */
 
 @layer base {
-  :root {
-    --background: 0 0% 2%;
-    --foreground: 0 0% 98%;
-    --border: 0 0% 10%;
-  }
-
-  * {
-    @apply border-border;
-  }
-
   body {
-    @apply bg-background text-foreground antialiased selection:bg-primary selection:text-white;
+    background-color: #050505;
+    color: #FAFAFA;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+/* Custom Selection styling for our accent */
+::selection {
+  background-color: #CC5500;
+  color: white;
 }
 
 /* Typography Enhancements */
