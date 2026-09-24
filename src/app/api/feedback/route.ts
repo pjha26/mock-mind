@@ -6,10 +6,11 @@ import { StructuredOutputParser } from '@langchain/core/output_parsers';
 import { z } from 'zod';
 import { SystemMessage } from '@langchain/core/messages';
 import prisma from '../../../lib/prisma';
+import { GROQ_LLM_MODEL, GROQ_FAST_MODEL } from '../../../config/constants';
 
 const feedbackModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-  model: 'llama-3.1-8b-instant',
+  model: GROQ_LLM_MODEL,
   temperature: 0.2,
 });
 
@@ -85,10 +86,10 @@ ${transcriptStr}`;
         new SystemMessage(prompt)
       ]);
     } catch (modelError: any) {
-      console.warn('Primary model failed, falling back to llama-3.3-70b-versatile:', modelError.message);
+      console.warn(`Primary model failed, falling back to ${GROQ_FAST_MODEL}:`, modelError.message);
       const fallbackModel = new ChatGroq({
         apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-        model: 'llama-3.3-70b-versatile',
+        model: GROQ_FAST_MODEL,
         temperature: 0.2,
       });
       response = await fallbackModel.invoke([
