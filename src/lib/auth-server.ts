@@ -1,4 +1,4 @@
-import { jwtVerify } from 'jose';
+import { verifyToken } from '../utils/jwt';
 
 export async function getUserFromRequest(req: Request) {
   const auth = req.headers.get('Authorization');
@@ -6,9 +6,8 @@ export async function getUserFromRequest(req: Request) {
   
   try {
     const token = auth.slice(7);
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET_KEY);
-    const { payload } = await jwtVerify(token, secret);
-    return payload as { userId: string; email: string };
+    const payload = await verifyToken(token);
+    return payload ? { userId: payload.userId, email: payload.email } : null;
   } catch {
     return null;
   }
