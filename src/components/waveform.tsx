@@ -122,12 +122,8 @@ export default function Waveform({ className = '' }: WaveformProps) {
   }, []);
 
   return (
-    <div className={`w-full h-full bg-[#050505] relative overflow-hidden rounded-[calc(2rem-0.375rem)] ${className}`}>
+    <div className={`w-full h-full relative overflow-hidden ${className}`}>
       <canvas ref={canvasRef} className="block w-full h-full absolute inset-0" />
-      
-      {/* Structural gradients for depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-90 pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none" />
     </div>
   );
 }

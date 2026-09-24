@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'motion/react';
+import { motion, useMotionValue, useTransform, animate } from 'motion/react';
+import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import TopNavBar from '@/components/top-nav-bar';
 import Footer from '@/components/footer';
@@ -11,6 +12,33 @@ import GodRays from '@/components/god-rays';
 import Waveform from '@/components/waveform';
 
 export default function Home() {
+  const [isMounted, setIsMounted] = useState(false);
+  const [isSettled, setIsSettled] = useState(false);
+  
+  const sweepProgress = useMotionValue(0);
+  const textClipPath = useTransform(sweepProgress, [0, 1], ['inset(-20% 100% -20% -20%)', 'inset(-20% 0% -20% -20%)']);
+  const playheadLeft = useTransform(sweepProgress, [0, 1], ['0%', '100%']);
+
+  useEffect(() => {
+    setIsMounted(true);
+    const hasRun = sessionStorage.getItem('heroEntranceRun');
+    if (!hasRun) {
+      const runAnimation = async () => {
+        await new Promise(r => setTimeout(r, 400));
+        await animate(sweepProgress, 1, {
+          duration: 1.4,
+          ease: [0.16, 1, 0.3, 1]
+        });
+        setIsSettled(true);
+        sessionStorage.setItem('heroEntranceRun', 'true');
+      };
+      runAnimation();
+    } else {
+      sweepProgress.set(1);
+      setIsSettled(true);
+    }
+  }, [sweepProgress]);
+
   const staggerContainer = {
     hidden: { opacity: 0 },
     show: {
@@ -26,6 +54,12 @@ export default function Home() {
     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } }
   };
 
+
+  const fadeUpDelayed = {
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const, delay: 0.8 } }
+  };
+
   return (
     <div className="min-h-[100dvh] flex flex-col bg-[#050505] text-[#FAFAFA] font-sans selection:bg-[#EAB308] selection:text-white">
       <TopNavBar />
@@ -38,29 +72,67 @@ export default function Home() {
             
             {/* Left: Typography Anchor */}
             <motion.div 
-              className="w-full md:w-7/12 z-10 flex flex-col items-start"
+              className="w-full md:w-7/12 z-10 flex flex-col items-start relative"
               variants={staggerContainer}
               initial="hidden"
               animate="show"
             >
-              <motion.div variants={fadeUp} className="mb-4">
-                <span className="text-[#EAB308] font-mono text-sm tracking-[0.2em] uppercase">Conquer your nerves.</span>
+              {/* Structural framing motif & Eyebrow */}
+              <motion.div variants={fadeUp} className="flex items-center gap-4 mb-8">
+                 <div className="w-1.5 h-1.5 rounded-full bg-[#EAB308]" />
+                 <div className="h-[1px] w-8 bg-white/20" />
+                 <span className="text-[#EAB308] font-mono font-bold text-[13px] tracking-[0.2em] uppercase">Elite Talent</span>
+                 <div className="h-[1px] w-16 bg-white/20" />
               </motion.div>
-              <motion.h1 
-                variants={fadeUp}
-                className="font-display text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[1.05] tracking-tight mb-8"
-              >
-                Elite <br className="hidden md:block"/> Talent.
-              </motion.h1>
+
+              <div className="relative w-fit">
+                {/* The text with a dynamic clipPath */}
+                <motion.h1 
+                  style={{ clipPath: textClipPath }}
+                  className="font-display text-5xl md:text-7xl lg:text-[6rem] font-extrabold leading-[1.05] tracking-tight text-[#FAFAFA] mb-8 relative z-10"
+                >
+                  Conquer your <br className="hidden md:block"/> nerves.
+                </motion.h1>
+
+                {/* The "Sweeping" Laser overlay */}
+                {isMounted && !isSettled && (
+                  <motion.div 
+                    className="absolute top-0 bottom-0 z-20 pointer-events-none flex items-center justify-center mix-blend-screen"
+                    style={{ left: playheadLeft, x: '-50%' }}
+                  >
+                    <motion.div 
+                      layoutId="waveform-hero" 
+                      className="w-24 md:w-32 h-[120%] flex items-center justify-center opacity-100"
+                    >
+                      <Waveform />
+                      {/* Bright inner core for the laser sweep */}
+                      <div className="absolute inset-0 bg-[#EAB308] opacity-60 blur-2xl rounded-full" />
+                      <div className="absolute inset-y-0 w-1 bg-white blur-[2px] opacity-80" />
+                    </motion.div>
+                  </motion.div>
+                )}
+              </div>
               
-              <motion.p 
-                variants={fadeUp}
-                className="text-[#9CA3AF] text-lg md:text-xl max-w-[45ch] leading-relaxed mb-10"
-              >
-                Practice high-stakes technical conversations with an AI that feels human. Refine your narrative, overcome anxiety, and land the role you deserve.
-              </motion.p>
+              {/* Settled state container */}
+              <div className="flex items-center gap-6 mb-12 min-h-[32px]">
+                {/* The resting waveform drops in here via layoutId */}
+                {(isSettled || !isMounted) && (
+                  <motion.div 
+                    layoutId="waveform-hero"
+                    className="h-8 w-32 opacity-70 mix-blend-screen pointer-events-none"
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <Waveform />
+                  </motion.div>
+                )}
+                {/* Connecting hairline */}
+                <motion.div variants={fadeUpDelayed} className="flex items-center gap-6">
+                  <div className="h-[1px] w-24 bg-white/10 hidden md:block" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/20 hidden md:block" />
+                </motion.div>
+              </div>
               
-              <motion.div variants={fadeUp} className="flex items-center gap-6">
+              <motion.div variants={fadeUpDelayed} className="flex items-center gap-6">
                 {/* Button-in-Button CTA Pattern */}
                 <Link href="/setup" className="group flex items-center bg-[#EAB308] text-white rounded-full pl-6 pr-2 py-2 hover:bg-[#ca8a04] transition-colors active:scale-[0.98]">
                   <span className="font-semibold tracking-wide text-sm mr-4">BEGIN SESSION</span>
@@ -89,7 +161,7 @@ export default function Home() {
                 {/* Image Container with Double-Bezel */}
                 <div className="w-full h-full rounded-[2rem] p-1.5 border border-white/10 bg-white/5 relative z-10">
                   <div className="w-full h-full rounded-[calc(2rem-0.375rem)] overflow-hidden relative shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
-                    <Waveform />
+                    <ParticleFlow />
                   </div>
                 </div>
               </div>
