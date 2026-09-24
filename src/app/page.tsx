@@ -8,6 +8,7 @@ import TopNavBar from '@/components/top-nav-bar';
 import Footer from '@/components/footer';
 import ParticleFlow from '@/components/particle-flow';
 import GodRays from '@/components/god-rays';
+import Waveform from '@/components/waveform';
 
 export default function Home() {
   const staggerContainer = {
@@ -42,6 +43,9 @@ export default function Home() {
               initial="hidden"
               animate="show"
             >
+              <motion.div variants={fadeUp} className="mb-4">
+                <span className="text-[#EAB308] font-mono text-sm tracking-[0.2em] uppercase">Conquer your nerves.</span>
+              </motion.div>
               <motion.h1 
                 variants={fadeUp}
                 className="font-display text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[1.05] tracking-tight mb-8"
@@ -85,7 +89,7 @@ export default function Home() {
                 {/* Image Container with Double-Bezel */}
                 <div className="w-full h-full rounded-[2rem] p-1.5 border border-white/10 bg-white/5 relative z-10">
                   <div className="w-full h-full rounded-[calc(2rem-0.375rem)] overflow-hidden relative shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
-                    <ParticleFlow />
+                    <Waveform />
                   </div>
                 </div>
               </div>
