@@ -48,7 +48,7 @@ export default function TopNavBar({ activeLink }: TopNavBarProps) {
             SIGN IN
           </Link>
           <Link
-            className="group flex items-center bg-[#CC5500] text-white rounded-full pl-5 pr-1.5 py-1.5 hover:bg-[#E66000] transition-colors active:scale-[0.98]"
+            className="group flex items-center bg-[#EAB308] text-white rounded-full pl-5 pr-1.5 py-1.5 hover:bg-[#ca8a04] transition-colors active:scale-[0.98]"
             href="/setup"
           >
             <span className="font-semibold tracking-wide text-xs mr-3">BEGIN</span>

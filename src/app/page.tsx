@@ -25,7 +25,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-[#050505] text-[#FAFAFA] font-sans selection:bg-[#CC5500] selection:text-white">
+    <div className="min-h-[100dvh] flex flex-col bg-[#050505] text-[#FAFAFA] font-sans selection:bg-[#EAB308] selection:text-white">
       <TopNavBar />
 
       <main className="flex-grow flex flex-col pt-24 md:pt-32 relative">
@@ -57,7 +57,7 @@ export default function Home() {
               
               <motion.div variants={fadeUp} className="flex items-center gap-6">
                 {/* Button-in-Button CTA Pattern */}
-                <Link href="/setup" className="group flex items-center bg-[#CC5500] text-white rounded-full pl-6 pr-2 py-2 hover:bg-[#E66000] transition-colors active:scale-[0.98]">
+                <Link href="/setup" className="group flex items-center bg-[#EAB308] text-white rounded-full pl-6 pr-2 py-2 hover:bg-[#ca8a04] transition-colors active:scale-[0.98]">
                   <span className="font-semibold tracking-wide text-sm mr-4">BEGIN SESSION</span>
                   <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center transition-transform group-hover:translate-x-1 group-hover:-translate-y-[1px] group-hover:scale-105">
                     <ArrowRight className="w-4 h-4" />
@@ -105,7 +105,7 @@ export default function Home() {
               <div className="text-xs font-mono text-[#9CA3AF] tracking-[0.1em] uppercase">Average Time to Hire</div>
             </div>
             <div className="p-12 md:p-16 flex flex-col justify-center">
-              <div className="font-display text-5xl md:text-6xl font-bold mb-4 text-[#CC5500]">96%</div>
+              <div className="font-display text-5xl md:text-6xl font-bold mb-4 text-[#EAB308]">96%</div>
               <div className="text-xs font-mono text-[#9CA3AF] tracking-[0.1em] uppercase">Offer Acceptance</div>
             </div>
           </div>
@@ -212,8 +212,8 @@ export default function Home() {
                   <h3 className="font-display text-2xl font-bold mb-3">1. Select Target</h3>
                   <p className="text-[#9CA3AF] text-sm leading-relaxed max-w-sm ml-auto">Define the role, seniority, and company archetype. The AI calibrates its expectations immediately.</p>
                 </div>
-                <div className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow-[0_0_15px_rgba(204,85,0,0.15)]">
-                  <div className="w-2 h-2 rounded-full bg-[#CC5500]" />
+                <div className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow-[0_0_15px_rgba(234, 179, 8,0.15)]">
+                  <div className="w-2 h-2 rounded-full bg-[#EAB308]" />
                 </div>
                 <div className="md:hidden w-full">
                   <h3 className="font-display text-2xl font-bold mb-3">1. Select Target</h3>
@@ -230,8 +230,8 @@ export default function Home() {
                 className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-16"
               >
                 <div className="hidden md:block md:w-1/2" />
-                <div className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow-[0_0_15px_rgba(204,85,0,0.15)]">
-                  <div className="w-2 h-2 rounded-full bg-[#CC5500]" />
+                <div className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow-[0_0_15px_rgba(234, 179, 8,0.15)]">
+                  <div className="w-2 h-2 rounded-full bg-[#EAB308]" />
                 </div>
                 <div className="w-full md:w-1/2">
                   <h3 className="font-display text-2xl font-bold mb-3">2. Voice Session</h3>
@@ -250,8 +250,8 @@ export default function Home() {
                   <h3 className="font-display text-2xl font-bold mb-3">3. Diagnostics</h3>
                   <p className="text-[#9CA3AF] text-sm leading-relaxed max-w-sm ml-auto">Review your performance telemetry. Identify knowledge gaps, pacing issues, and narrative weakness instantly.</p>
                 </div>
-                <div className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow-[0_0_15px_rgba(204,85,0,0.15)]">
-                  <div className="w-2 h-2 rounded-full bg-[#CC5500]" />
+                <div className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow-[0_0_15px_rgba(234, 179, 8,0.15)]">
+                  <div className="w-2 h-2 rounded-full bg-[#EAB308]" />
                 </div>
                 <div className="md:hidden w-full">
                   <h3 className="font-display text-2xl font-bold mb-3">3. Diagnostics</h3>

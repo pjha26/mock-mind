@@ -49,7 +49,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-[100dvh] flex flex-col font-sans antialiased bg-[#050505] text-[#FAFAFA] selection:bg-[#CC5500] selection:text-white">
+    <div className="min-h-[100dvh] flex flex-col font-sans antialiased bg-[#050505] text-[#FAFAFA] selection:bg-[#EAB308] selection:text-white">
       {/* Minimal Header */}
       <header className="absolute top-0 left-0 w-full p-6 md:p-12 z-20 flex justify-between items-center">
         <Link href="/" className="font-display font-bold text-2xl tracking-tighter">MockMind</Link>
@@ -98,7 +98,7 @@ export default function SignupPage() {
                     id="name"
                     type="text"
                     required
-                    className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 focus:border-[#CC5500] focus:ring-1 focus:ring-[#CC5500] transition-colors text-[#FAFAFA] placeholder:text-white/20 outline-none"
+                    className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 focus:border-[#EAB308] focus:ring-1 focus:ring-[#EAB308] transition-colors text-[#FAFAFA] placeholder:text-white/20 outline-none"
                     placeholder="Jane Doe"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -113,7 +113,7 @@ export default function SignupPage() {
                     id="email"
                     type="email"
                     required
-                    className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 focus:border-[#CC5500] focus:ring-1 focus:ring-[#CC5500] transition-colors text-[#FAFAFA] placeholder:text-white/20 outline-none"
+                    className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 focus:border-[#EAB308] focus:ring-1 focus:ring-[#EAB308] transition-colors text-[#FAFAFA] placeholder:text-white/20 outline-none"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -129,7 +129,7 @@ export default function SignupPage() {
                     type="password"
                     required
                     minLength={6}
-                    className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 focus:border-[#CC5500] focus:ring-1 focus:ring-[#CC5500] transition-colors text-[#FAFAFA] placeholder:text-white/20 outline-none"
+                    className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 focus:border-[#EAB308] focus:ring-1 focus:ring-[#EAB308] transition-colors text-[#FAFAFA] placeholder:text-white/20 outline-none"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -144,7 +144,7 @@ export default function SignupPage() {
                     <div className="relative">
                       <select
                         id="jobRole"
-                        className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 appearance-none focus:border-[#CC5500] focus:ring-1 focus:ring-[#CC5500] transition-colors text-[#FAFAFA] cursor-pointer outline-none text-sm"
+                        className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 appearance-none focus:border-[#EAB308] focus:ring-1 focus:ring-[#EAB308] transition-colors text-[#FAFAFA] cursor-pointer outline-none text-sm"
                         value={jobRole}
                         onChange={(e) => setJobRole(e.target.value)}
                       >
@@ -167,7 +167,7 @@ export default function SignupPage() {
                     <div className="relative">
                       <select
                         id="experienceLevel"
-                        className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 appearance-none focus:border-[#CC5500] focus:ring-1 focus:ring-[#CC5500] transition-colors text-[#FAFAFA] cursor-pointer outline-none text-sm"
+                        className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 appearance-none focus:border-[#EAB308] focus:ring-1 focus:ring-[#EAB308] transition-colors text-[#FAFAFA] cursor-pointer outline-none text-sm"
                         value={experienceLevel}
                         onChange={(e) => setExperienceLevel(e.target.value)}
                       >
@@ -185,7 +185,7 @@ export default function SignupPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="group w-full bg-[#CC5500] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-[#E66000] disabled:opacity-50 disabled:cursor-not-allowed mt-8 active:scale-[0.98]"
+                  className="group w-full bg-[#EAB308] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-[#ca8a04] disabled:opacity-50 disabled:cursor-not-allowed mt-8 active:scale-[0.98]"
                 >
                   {isLoading ? (
                     <Loader2 className="w-5 h-5 animate-spin" />

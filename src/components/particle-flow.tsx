@@ -70,7 +70,7 @@ export default function ParticleFlow() {
         ctx.beginPath();
         ctx.moveTo(startX, startY);
         ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
-        ctx.strokeStyle = 'rgba(204, 85, 0, 0.15)'; // Subtle amber line
+        ctx.strokeStyle = 'rgba(234, 179, 8, 0.15)'; // Subtle amber line
         ctx.lineWidth = 1;
         ctx.stroke();
 
@@ -104,12 +104,12 @@ export default function ParticleFlow() {
 
           ctx.beginPath();
           ctx.arc(px, py, 1.5, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(204, 85, 0, ${opacity})`; // Amber dot
+          ctx.fillStyle = `rgba(234, 179, 8, ${opacity})`; // Amber dot
           ctx.fill();
           
           // Optional: slight glow for the dot
           ctx.shadowBlur = 4;
-          ctx.shadowColor = `rgba(204, 85, 0, ${opacity * 0.5})`;
+          ctx.shadowColor = `rgba(234, 179, 8, ${opacity * 0.5})`;
           ctx.fill();
           ctx.shadowBlur = 0; // reset for next drawing
         }

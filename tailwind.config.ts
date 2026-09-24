@@ -14,8 +14,8 @@ const config: Config = {
         background: "#050505",
         surface: "#111111",
         "surface-raised": "#1a1a1a",
-        primary: "#CC5500", // Warm Amber
-        "primary-hover": "#e66000",
+        primary: "#EAB308", // Yellow Amber
+        "primary-hover": "#ca8a04",
         secondary: "#1E3A8A", // Cool Blue for duotone
         text: "#FAFAFA",
         "text-muted": "#9CA3AF",
@@ -24,6 +24,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-manrope)", "sans-serif"],
         display: ["var(--font-syne)", "sans-serif"],
+        mono: ["var(--font-mono)", "monospace"],
       },
       spacing: {
         "container-max": "1200px",
