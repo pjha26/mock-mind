@@ -7,6 +7,7 @@ import { ArrowRight } from 'lucide-react';
 import TopNavBar from '@/components/top-nav-bar';
 import Footer from '@/components/footer';
 import ParticleFlow from '@/components/particle-flow';
+import GodRays from '@/components/god-rays';
 
 export default function Home() {
   const staggerContainer = {
@@ -111,9 +112,18 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ASYMMETRICAL FEATURE BENTO */}
-        <section className="py-32 px-6 md:px-12 lg:px-24 max-w-[1400px] mx-auto w-full">
-          <div className="mb-20 max-w-2xl">
+        {/* ASYMMETRICAL FEATURE BENTO with God Rays Background */}
+        <div className="relative w-full border-b border-white/10">
+          <div className="absolute inset-0 z-0">
+            <GodRays 
+              colors={{ base: '#050505', accent: '#CC5500', highlight: '#FAFAFA' }} 
+            />
+            {/* Smooth vertical fade so the rays blend naturally with adjacent sections */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505]" />
+          </div>
+
+          <section className="py-32 px-6 md:px-12 lg:px-24 max-w-[1400px] mx-auto w-full relative z-10">
+            <div className="mb-20 max-w-2xl">
             <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight mb-6">Hiring Success Built <br/> on Precision</h2>
             <p className="text-[#9CA3AF] text-lg leading-relaxed">
               We replace subjective human bias with rigorous, high-fidelity technical evaluation.
@@ -184,7 +194,8 @@ export default function Home() {
 
             </div>
           </div>
-        </section>
+          </section>
+        </div>
 
         {/* THE FLOW (CONSTELLATION PATH) */}
         <section className="py-32 px-6 md:px-12 lg:px-24 max-w-[1400px] mx-auto w-full relative">
