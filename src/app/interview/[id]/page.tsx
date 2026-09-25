@@ -4,6 +4,7 @@ import { useVapi } from '@/features/interview/use-vapi';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Briefcase, Mic, MicOff, PhoneOff } from 'lucide-react';
 import { useState, useEffect, use } from 'react';
+import NeuralNoise from '@/components/neural-noise';
 
 export default function InterviewRoom({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -94,18 +95,18 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
   // 3 Distinct Orb States matching user request
   const getOrbStyles = () => {
     if (!isSessionActive) {
-      return 'w-64 h-64 rounded-full bg-[#3b82f6]/5 border border-[#3b82f6]/20 shadow-[0_0_20px_rgba(59,130,246,0.1)] animate-breathe';
+      return 'w-64 h-64 rounded-full bg-[#EAB308]/5 border border-[#EAB308]/20 shadow-[0_0_20px_rgba(234,179,8,0.1)] animate-breathe';
     }
     if (isSpeaking) {
-      return 'w-64 h-64 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-purple-500/40 shadow-[0_0_50px_rgba(168,85,247,0.3)] animate-[pulse_1.5s_ease-in-out_infinite] scale-105 transition-all duration-700';
+      return 'w-64 h-64 rounded-full bg-gradient-to-br from-[#CC5500]/20 to-[#EAB308]/20 border border-[#CC5500]/40 shadow-[0_0_50px_rgba(204,85,0,0.3)] animate-[pulse_1.5s_ease-in-out_infinite] scale-105 transition-all duration-700';
     }
-    return 'w-64 h-64 rounded-full bg-[#3b82f6]/20 border border-[#3b82f6]/50 shadow-[0_0_40px_rgba(59,130,246,0.5)] animate-[ping_0.8s_cubic-bezier(0,0,0.2,1)_infinite] transition-all duration-300';
+    return 'w-64 h-64 rounded-full bg-[#EAB308]/20 border border-[#EAB308]/50 shadow-[0_0_40px_rgba(234,179,8,0.5)] animate-[ping_0.8s_cubic-bezier(0,0,0.2,1)_infinite] transition-all duration-300';
   };
 
   const getInnerOrbStyles = () => {
-    if (!isSessionActive) return 'w-32 h-32 rounded-full bg-[#3b82f6]/10';
-    if (isSpeaking) return 'w-36 h-36 rounded-full bg-gradient-to-br from-indigo-500/40 to-purple-500/40 animate-pulse';
-    return 'w-32 h-32 rounded-full bg-[#3b82f6]/40 shadow-[0_0_20px_rgba(59,130,246,0.8)]';
+    if (!isSessionActive) return 'w-32 h-32 rounded-full bg-[#EAB308]/10';
+    if (isSpeaking) return 'w-36 h-36 rounded-full bg-gradient-to-br from-[#CC5500]/40 to-[#EAB308]/40 animate-pulse';
+    return 'w-32 h-32 rounded-full bg-[#EAB308]/40 shadow-[0_0_20px_rgba(234,179,8,0.8)]';
   };
 
   return (
@@ -165,8 +166,14 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
         <div className="flex-grow flex flex-col items-center justify-center w-full relative max-w-md mx-auto my-12 perspective-1000">
           <div className="absolute inset-0 flex flex-col items-center justify-center mix-blend-screen scale-125">
             <div className="w-full flex flex-col items-center justify-center gap-8">
-              <div className={`${getOrbStyles()} flex items-center justify-center`}>
-                <div className={`${getInnerOrbStyles()}`} />
+              <div className={`${getOrbStyles()} flex items-center justify-center relative overflow-hidden`}>
+                <NeuralNoise 
+                  className="absolute inset-0 w-full h-full object-cover z-0" 
+                  isSessionActive={isSessionActive}
+                  isSpeaking={isSpeaking}
+                  isUserSpeaking={activeTranscript.length > 0}
+                />
+                <div className={`${getInnerOrbStyles()} relative z-10 mix-blend-overlay`} />
               </div>
 
               {/* AI Speaking Waveform (5 bars) */}
@@ -199,17 +206,17 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
 
           {/* Mic Button */}
           <div className="relative flex items-center justify-center group">
-            {isSessionActive && !isSpeaking && <div className="absolute inset-0 rounded-full bg-[#3b82f6]/30 animate-ping pointer-events-none" />}
+            {isSessionActive && !isSpeaking && <div className="absolute inset-0 rounded-full bg-[#EAB308]/30 animate-ping pointer-events-none" />}
             <button
               onClick={isSessionActive ? undefined : handleStart}
               className={`px-10 py-5 rounded-full flex items-center gap-3 justify-center shadow-lg transition-all duration-300 z-20 focus:outline-none focus:ring-2 focus:ring-primary/50 active:scale-95 ${isSessionActive
-                ? 'bg-[#3b82f6] text-white cursor-default shadow-[0_0_20px_rgba(59,130,246,0.5)]'
-                : 'bg-transparent border border-zinc-700 text-zinc-300 hover:border-zinc-500 hover:text-white cursor-pointer hover:bg-zinc-800/50'
+                ? 'bg-[#EAB308] text-black cursor-default shadow-[0_0_20px_rgba(234,179,8,0.5)]'
+                : 'bg-transparent border border-zinc-700 text-zinc-300 hover:border-[#CC5500] hover:text-white cursor-pointer hover:bg-zinc-800/50'
                 }`}
               aria-label={isSessionActive ? 'Microphone active' : 'Start recording'}
             >
               {isSessionActive ? (
-                <MicOff className="w-6 h-6 text-white" />
+                <MicOff className="w-6 h-6 text-black" />
               ) : (
                 <Mic className="w-6 h-6" />
               )}
