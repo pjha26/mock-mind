@@ -83,9 +83,9 @@ function FeedbackContent() {
   const strokeDashoffset = circumference - (score / 100) * circumference;
 
   const metrics = feedback ? [
-    { label: 'Communication', score: feedback.communication, icon: MessageSquare, color: 'text-blue-400' },
-    { label: 'Depth of Answers', score: feedback.depthOfAnswers, icon: Target, color: 'text-purple-400' },
-    { label: 'Adaptability', score: feedback.adaptability, icon: Zap, color: 'text-amber-400' },
+    { label: 'Communication', score: feedback.communication, icon: MessageSquare, color: 'text-[#CC5500]' },
+    { label: 'Depth of Answers', score: feedback.depthOfAnswers, icon: Target, color: 'text-[#CC5500]' },
+    { label: 'Adaptability', score: feedback.adaptability, icon: Zap, color: 'text-[#CC5500]' },
   ] : [];
 
   if (loading) {
@@ -163,8 +163,10 @@ function FeedbackContent() {
               />
             </svg>
             <div className="absolute flex flex-col items-center justify-center">
-              <span className="text-4xl font-bold text-white">{score}</span>
-              <span className="text-xs text-on-surface-variant uppercase tracking-widest mt-1">Score</span>
+              <span className="text-4xl font-bold text-white tracking-tighter">
+                {score}<span className="text-2xl text-on-surface-variant font-medium">/100</span>
+              </span>
+              <span className="text-xs text-on-surface-variant uppercase tracking-widest mt-1">Overall Score</span>
             </div>
           </div>
         </div>
@@ -183,7 +185,9 @@ function FeedbackContent() {
                   <div className="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center">
                     <Icon className={`w-5 h-5 ${metric.color}`} />
                   </div>
-                  <span className="text-2xl font-bold">{metric.score}</span>
+                  <span className="text-2xl font-bold tracking-tight">
+                    {metric.score}<span className="text-base text-on-surface-variant font-medium">/100</span>
+                  </span>
                 </div>
                 <div>
                   <h3 className="font-title-md text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-2">{metric.label}</h3>

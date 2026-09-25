@@ -1,18 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-async function run() {
-  const int = await prisma.interview.findFirst({
-    where: { transcript: { not: null } },
-    orderBy: { createdAt: 'desc' }
-  });
-  if (!int) return console.log('No interview found');
-  console.log('Interview ID:', int.id);
-  const res = await fetch('http://localhost:3000/api/feedback', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ interviewId: int.id })
-  });
-  const data = await res.json();
-  console.log(JSON.stringify(data, null, 2));
-}
-run().finally(() => prisma.$disconnect());
+fetch('http://localhost:3000/api/feedback', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ interviewId: 'b1e78f86-3177-4131-ba0e-fe7ea87f4499' })
+}).then(r => r.json()).then(console.log).catch(console.error);

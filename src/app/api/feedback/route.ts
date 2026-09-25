@@ -33,15 +33,18 @@ export async function POST(req: Request) {
 
     let transcriptData = transcript;
 
-    // If interviewId is provided, load transcript from DB
+    // If interviewId is provided, load transcript and evaluations from DB
+    let answerEvaluations: any[] = [];
     if (interviewId && !transcriptData) {
       const interview = await prisma.interview.findUnique({
         where: { id: interviewId },
+        include: { answerEvaluations: true }
       });
       if (!interview?.transcript) {
         return NextResponse.json({ error: 'Interview or transcript not found' }, { status: 404 });
       }
       transcriptData = interview.transcript;
+      answerEvaluations = interview.answerEvaluations || [];
     }
 
     if (!transcriptData || !Array.isArray(transcriptData) || transcriptData.length === 0) {
@@ -113,6 +116,50 @@ ${transcriptStr}`;
         weaknesses: ["Detailed scoring temporarily unavailable"],
         detailedFeedback: "We encountered an issue generating detailed feedback for this session, but your responses have been recorded. Please try again or contact support if this persists."
       };
+    }
+
+    // Compute mathematical averages from AnswerEvaluations
+    let mathAverageScores = null;
+    if (answerEvaluations.length > 0) {
+      const count = answerEvaluations.length;
+      const totalClarity = answerEvaluations.reduce((sum, ev) => sum + ev.clarityScore, 0);
+      const totalDepth = answerEvaluations.reduce((sum, ev) => sum + ev.depthScore, 0);
+      const totalRelevance = answerEvaluations.reduce((sum, ev) => sum + ev.relevanceScore, 0);
+      
+      const avgClarityRaw = totalClarity / count;
+      const avgDepthRaw = totalDepth / count;
+      const avgRelevanceRaw = totalRelevance / count;
+      
+      // Normalize 1-5 scale to 0-100 scale (score * 20)
+      const normalize = (val: number) => Math.round((val / 5) * 100);
+      
+      const avgClarity = normalize(avgClarityRaw);
+      const avgDepth = normalize(avgDepthRaw);
+      const avgRelevance = normalize(avgRelevanceRaw);
+      const overallAvg = Math.round((avgClarity + avgDepth + avgRelevance) / 3);
+
+      mathAverageScores = {
+        scale: "0-100",
+        overallScore: overallAvg,
+        clarityScore: avgClarity,
+        depthScore: avgDepth,
+        relevanceScore: avgRelevance,
+        evaluatedTurnsCount: count,
+        rawScale: "1-5"
+      };
+    }
+
+    // Attach to the final JSON blob
+    parsedFeedback.llmHolisticScores = {
+      scale: "0-100",
+      overallScore: parsedFeedback.overallScore,
+      communication: parsedFeedback.communication,
+      depthOfAnswers: parsedFeedback.depthOfAnswers,
+      adaptability: parsedFeedback.adaptability
+    };
+    
+    if (mathAverageScores) {
+      parsedFeedback.mathAverageScores = mathAverageScores;
     }
 
     // If we have an interviewId, save feedback to DB
