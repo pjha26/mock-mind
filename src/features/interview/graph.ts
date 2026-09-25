@@ -96,6 +96,9 @@ const generationModel = primaryGenerationModel.withFallbacks({
 async function evaluateAnswerNode(state: typeof InterviewStateAnnotation.State) {
   logger.info('Running evaluateAnswerNode');
   
+  const topicPool = TOPIC_POOLS[state.interviewType] ?? TOPIC_POOLS['Behavioral'];
+  const TopicEnum = z.enum(topicPool as [string, ...string[]]);
+
   const parser = StructuredOutputParser.fromZodSchema(
     z.object({
       evaluation: z.enum(['strong', 'weak', 'vague', 'incomplete', 'excellent']),
@@ -103,15 +106,13 @@ async function evaluateAnswerNode(state: typeof InterviewStateAnnotation.State) 
       depthScore: z.number().min(1).max(5).describe('Numeric score for depth, 1 to 5.'),
       relevanceScore: z.number().min(1).max(5).describe('Numeric score for relevance, 1 to 5.'),
       reasoning: z.string(),
-      topicDiscussed: z.string().describe('The broad interview topic this exchange was about, e.g. "Leadership & Initiative" or "System Design & Architecture". Pick the closest match from the topic pool.'),
+      topicDiscussed: TopicEnum.describe('The exact interview topic this exchange was about. You MUST pick the exact string from the allowed enum values.'),
     })
   );
 
-  const topicPool = TOPIC_POOLS[state.interviewType] ?? TOPIC_POOLS['Behavioral'];
-
   const prompt = `You are evaluating a candidate's answer in a ${state.interviewType} interview for the role of ${state.jobRole}.
 Evaluate the candidate's last answer based on depth, clarity, and relevance. Provide numeric scores from 1-5 for clarityScore, depthScore, and relevanceScore.
-Also identify which topic from this pool the answer was about: ${topicPool.join(', ')}.
+Also identify which EXACT topic from this pool the answer was about: ${topicPool.join(', ')}. Do not make up a new topic name.
 ${parser.getFormatInstructions()}`;
 
   const response = await evaluationModel.invoke([
