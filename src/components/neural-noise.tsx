@@ -139,6 +139,19 @@ export default function NeuralNoise({
           
           return smoothstep(thickness, 0.0, edge);
       }
+      
+      // Uniform FBM ridge noise for ambient background (perfectly symmetric, no cell clustering)
+      float ambientWeb(vec2 uv, float time) {
+          vec2 p = uv * 0.8;
+          vec2 q = vec2(noise(p + time * 0.1), noise(p + vec2(10.0) - time * 0.1));
+          vec2 r = vec2(noise(p + q + vec2(1.7, 9.2) + time * 0.15), noise(p + q + vec2(8.3, 2.8) + time * 0.12));
+          float f = noise(p + r);
+          
+          // Create soft sweeping ridges
+          float edge = abs(f - 0.5);
+          float thickness = mix(0.01, 0.03, uIntensity);
+          return smoothstep(thickness, 0.0, edge) * 0.6;
+      }
 
       void main() {
         // Center UV and correct aspect ratio
@@ -149,23 +162,19 @@ export default function NeuralNoise({
         float dist = length(uv);
         float mask = ${variant === 'orb' ? 'smoothstep(1.0, 0.85, dist)' : '1.0'};
         
-        // Base coordinate scale (drastically larger scale for background so only 2-3 lines appear)
-        vec2 p = uv * ${variant === 'orb' ? '3.5' : '0.35'};
-        
-        // Domain warping to make straight Voronoi lines look like organic plasma/nerves
-        vec2 warp = vec2(
-            noise(p + uTime * 0.2),
-            noise(p + 10.0 - uTime * 0.15)
-        ) * 1.5;
-        
-        // Layer 1
-        float pattern = neuralWeb(p + warp, uTime * ${variant === 'orb' ? '1.0' : '0.5'});
+        float pattern = 0.0;
         
         ${variant === 'orb' ? `
-        // Layer 2 (smaller, faster - only for orb to save performance on full screen)
+        // Voronoi computation only for orb
+        vec2 p = uv * 3.5;
+        vec2 warp = vec2(noise(p + uTime * 0.2), noise(p + 10.0 - uTime * 0.15)) * 1.5;
+        pattern = neuralWeb(p + warp, uTime * 1.0);
         float w2 = neuralWeb(p * 1.5 - warp * 0.8, uTime * 1.2);
         pattern = max(pattern, w2 * 0.6);
-        ` : ''}
+        ` : `
+        // Uniform sweeping ridges for background
+        pattern = ambientWeb(uv, uTime);
+        `}
         
         // Colors
         vec3 bgCol = vec3(0.02, 0.02, 0.02); // #050505

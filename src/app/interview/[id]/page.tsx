@@ -186,20 +186,7 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
                 <div className={`${getInnerOrbStyles()} relative z-10 mix-blend-overlay`} />
               </div>
 
-              {/* AI Speaking Waveform (5 bars) */}
-              <div className="h-12 flex items-center gap-2">
-                {isSpeaking ? (
-                  <>
-                    <div className="w-1 rounded-full bg-[#EAB308] animate-bounce shadow-[0_0_8px_rgba(234,179,8,0.5)]" style={{ height: '40%', animationDelay: '0ms' }} />
-                    <div className="w-1 rounded-full bg-[#CC5500] animate-bounce shadow-[0_0_8px_rgba(204,85,0,0.5)]" style={{ height: '80%', animationDelay: '150ms' }} />
-                    <div className="w-1 rounded-full bg-[#EAB308] animate-bounce shadow-[0_0_8px_rgba(234,179,8,0.5)]" style={{ height: '100%', animationDelay: '300ms' }} />
-                    <div className="w-1 rounded-full bg-[#CC5500] animate-bounce shadow-[0_0_8px_rgba(204,85,0,0.5)]" style={{ height: '70%', animationDelay: '150ms' }} />
-                    <div className="w-1 rounded-full bg-[#EAB308] animate-bounce shadow-[0_0_8px_rgba(234,179,8,0.5)]" style={{ height: '50%', animationDelay: '0ms' }} />
-                  </>
-                ) : (
-                  <div className="h-12 w-full opacity-0" />
-                )}
-              </div>
+              <div className="h-4 w-full" />
             </div>
           </div>
         </div>
@@ -216,17 +203,16 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
 
           {/* Mic Button */}
           <div className="relative flex items-center justify-center group">
-            {isSessionActive && !isSpeaking && <div className="absolute inset-0 rounded-full bg-[#EAB308]/30 animate-ping pointer-events-none" />}
             <button
               onClick={isSessionActive ? undefined : handleStart}
               className={`px-10 py-5 rounded-full flex items-center gap-3 justify-center shadow-lg transition-all duration-300 z-20 focus:outline-none focus:ring-2 focus:ring-primary/50 active:scale-95 ${isSessionActive
-                ? 'bg-[#EAB308] text-black cursor-default shadow-[0_0_20px_rgba(234,179,8,0.5)]'
+                ? 'bg-zinc-900/50 border border-[#CC5500]/50 text-[#EAB308] cursor-default'
                 : 'bg-transparent border border-zinc-700 text-zinc-300 hover:border-[#CC5500] hover:text-white cursor-pointer hover:bg-zinc-800/50'
                 }`}
               aria-label={isSessionActive ? 'Microphone active' : 'Start recording'}
             >
               {isSessionActive ? (
-                <MicOff className="w-6 h-6 text-black" />
+                <MicOff className="w-6 h-6 text-[#EAB308]" />
               ) : (
                 <Mic className="w-6 h-6" />
               )}
