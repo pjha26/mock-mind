@@ -35,14 +35,16 @@ export async function POST(req: Request) {
 
     // If interviewId is provided, load transcript and evaluations from DB
     let answerEvaluations: any[] = [];
+    let interviewRef = null;
     if (interviewId && !transcriptData) {
       const interview = await prisma.interview.findUnique({
         where: { id: interviewId },
-        include: { answerEvaluations: true }
+        include: { answerEvaluations: { orderBy: { createdAt: 'asc' } } }
       });
       if (!interview?.transcript) {
         return NextResponse.json({ error: 'Interview or transcript not found' }, { status: 404 });
       }
+      interviewRef = interview;
       transcriptData = interview.transcript;
       answerEvaluations = interview.answerEvaluations || [];
     }
@@ -67,6 +69,24 @@ export async function POST(req: Request) {
       })
     );
 
+    let adaptabilityContext = "";
+    if (interviewId && interviewRef) {
+      const finalDifficulty = interviewRef.difficulty || 1;
+      const finalWeakCount = interviewRef.consecutiveWeakCount || 0;
+      const evalTrajectory = answerEvaluations.length > 0 
+        ? answerEvaluations.map((ev: any) => ev.evaluation).join(', ') 
+        : 'None recorded';
+
+      adaptabilityContext = `
+[ADAPTABILITY & PERFORMANCE SIGNALS]
+- Final Difficulty Level Reached: ${finalDifficulty} (Scale typically 1-5)
+- Consecutive Weak Answers at End: ${finalWeakCount}
+- Evaluation Trajectory (Turn-by-turn performance): ${evalTrajectory}
+
+When scoring Adaptability, strictly use the signals above. A candidate who started with weak answers but improved (trajectory shows 'weak' then 'strong') or managed to climb in difficulty demonstrates high adaptability. A candidate who remained stuck at low difficulty or ended with a streak of weak answers demonstrated poor adaptability.
+`;
+    }
+
     const prompt = `You are an expert technical recruiter analyzing a mock interview transcript.
 Generate a structured, honest, and constructive feedback report based on the candidate's actual performance.
 Be specific — reference actual things the candidate said or did. Do not use generic feedback.
@@ -78,7 +98,7 @@ Do NOT include the schema definition in your response.
 Do NOT wrap your answer in explanatory text like "Here is the JSON output that adheres to the schema."
 Do NOT output more than one JSON code block.
 Your entire response must be a single JSON object matching the schema, nothing else, no markdown code fences, no commentary before or after.
-
+${adaptabilityContext}
 Candidate transcript:
 ${transcriptStr}`;
 
