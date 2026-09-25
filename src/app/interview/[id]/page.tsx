@@ -115,7 +115,7 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
       {/* Absolute Top Progress Bar */}
       <div className="absolute top-0 left-0 w-full h-0.5 bg-zinc-800 z-50">
         <div
-          className="h-full bg-blue-500 transition-all duration-500"
+          className="h-full bg-[#CC5500] transition-all duration-500 shadow-[0_0_10px_rgba(204,85,0,0.5)]"
           style={{ width: `${(Math.min(currentQuestionIndex + 1, totalQuestions) / totalQuestions) * 100}%` }}
         />
       </div>
@@ -130,7 +130,17 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
           }}
         />
         <div className="absolute inset-0 bg-[#0a0a0a]/70 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/50" />
+        
+        {/* Full-screen faint neural ambient background */}
+        <NeuralNoise 
+          className="absolute inset-0 w-full h-full object-cover z-0 mix-blend-screen opacity-50" 
+          isSessionActive={isSessionActive}
+          isSpeaking={isSpeaking}
+          isUserSpeaking={activeTranscript.length > 0}
+          variant="background"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/50 pointer-events-none" />
       </div>
 
       {/* Main Content Canvas */}
@@ -139,7 +149,7 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
         {/* Top Status Bar */}
         <header className="w-full flex justify-between items-center bg-transparent mt-2 px-2">
           <div className="flex items-center gap-3 text-secondary">
-            <Briefcase className="w-5 h-5 text-[#3b82f6]" />
+            <Briefcase className="w-5 h-5 text-[#EAB308]" />
             <span className="font-title-md text-sm font-semibold tracking-wider uppercase text-on-surface">
               {interviewType}
             </span>
@@ -180,11 +190,11 @@ export default function InterviewRoom({ params }: { params: Promise<{ id: string
               <div className="h-12 flex items-center gap-2">
                 {isSpeaking ? (
                   <>
-                    <div className="w-1 rounded-full bg-blue-400 animate-bounce" style={{ height: '40%', animationDelay: '0ms' }} />
-                    <div className="w-1 rounded-full bg-blue-400 animate-bounce" style={{ height: '80%', animationDelay: '150ms' }} />
-                    <div className="w-1 rounded-full bg-blue-400 animate-bounce" style={{ height: '100%', animationDelay: '300ms' }} />
-                    <div className="w-1 rounded-full bg-blue-400 animate-bounce" style={{ height: '70%', animationDelay: '150ms' }} />
-                    <div className="w-1 rounded-full bg-blue-400 animate-bounce" style={{ height: '50%', animationDelay: '0ms' }} />
+                    <div className="w-1 rounded-full bg-[#EAB308] animate-bounce shadow-[0_0_8px_rgba(234,179,8,0.5)]" style={{ height: '40%', animationDelay: '0ms' }} />
+                    <div className="w-1 rounded-full bg-[#CC5500] animate-bounce shadow-[0_0_8px_rgba(204,85,0,0.5)]" style={{ height: '80%', animationDelay: '150ms' }} />
+                    <div className="w-1 rounded-full bg-[#EAB308] animate-bounce shadow-[0_0_8px_rgba(234,179,8,0.5)]" style={{ height: '100%', animationDelay: '300ms' }} />
+                    <div className="w-1 rounded-full bg-[#CC5500] animate-bounce shadow-[0_0_8px_rgba(204,85,0,0.5)]" style={{ height: '70%', animationDelay: '150ms' }} />
+                    <div className="w-1 rounded-full bg-[#EAB308] animate-bounce shadow-[0_0_8px_rgba(234,179,8,0.5)]" style={{ height: '50%', animationDelay: '0ms' }} />
                   </>
                 ) : (
                   <div className="h-12 w-full opacity-0" />

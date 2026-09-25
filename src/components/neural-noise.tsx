@@ -7,13 +7,15 @@ interface NeuralNoiseProps {
   isSessionActive?: boolean;
   isSpeaking?: boolean;
   isUserSpeaking?: boolean;
+  variant?: 'orb' | 'background';
 }
 
 export default function NeuralNoise({ 
   className = '',
   isSessionActive = false,
   isSpeaking = false,
-  isUserSpeaking = false
+  isUserSpeaking = false,
+  variant = 'orb'
 }: NeuralNoiseProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -67,11 +69,12 @@ export default function NeuralNoise({
       }
     `;
 
-    // Fragment Shader - Organic Voronoi Neural Web
+      // Fragment Shader - Organic Voronoi Neural Web
     const fsSource = `
       precision highp float;
       varying vec2 vUv;
       uniform float uTime;
+      uniform vec2 uResolution;
       uniform float uIntensity;
       uniform float uUserGlow;
       
@@ -129,8 +132,10 @@ export default function NeuralNoise({
           float edge = sqrt(minDist2) - sqrt(minDist);
           
           // Thickness of the web strands
-          // Slightly thicker when AI is speaking (uIntensity)
-          float thickness = mix(0.08, 0.15, uIntensity);
+          // Background variant needs ultra-thin hairline strands
+          float thicknessBase = ${variant === 'orb' ? '0.08' : '0.015'};
+          float thicknessActive = ${variant === 'orb' ? '0.15' : '0.03'};
+          float thickness = mix(thicknessBase, thicknessActive, uIntensity);
           
           return smoothstep(thickness, 0.0, edge);
       }
@@ -138,13 +143,14 @@ export default function NeuralNoise({
       void main() {
         // Center UV and correct aspect ratio
         vec2 uv = vUv * 2.0 - 1.0;
+        ${variant === 'background' ? 'uv.x *= uResolution.x / uResolution.y;' : ''}
         
-        // Circular mask with soft edge
+        // Circular mask with soft edge (only for orb)
         float dist = length(uv);
-        float mask = smoothstep(1.0, 0.85, dist);
+        float mask = ${variant === 'orb' ? 'smoothstep(1.0, 0.85, dist)' : '1.0'};
         
-        // Base coordinate scale
-        vec2 p = uv * 3.5;
+        // Base coordinate scale (drastically larger scale for background so only 2-3 lines appear)
+        vec2 p = uv * ${variant === 'orb' ? '3.5' : '0.35'};
         
         // Domain warping to make straight Voronoi lines look like organic plasma/nerves
         vec2 warp = vec2(
@@ -153,12 +159,13 @@ export default function NeuralNoise({
         ) * 1.5;
         
         // Layer 1
-        float w1 = neuralWeb(p + warp, uTime);
-        // Layer 2 (smaller, faster)
-        float w2 = neuralWeb(p * 1.5 - warp * 0.8, uTime * 1.2);
+        float pattern = neuralWeb(p + warp, uTime * ${variant === 'orb' ? '1.0' : '0.5'});
         
-        // Combine layers
-        float pattern = max(w1, w2 * 0.6);
+        ${variant === 'orb' ? `
+        // Layer 2 (smaller, faster - only for orb to save performance on full screen)
+        float w2 = neuralWeb(p * 1.5 - warp * 0.8, uTime * 1.2);
+        pattern = max(pattern, w2 * 0.6);
+        ` : ''}
         
         // Colors
         vec3 bgCol = vec3(0.02, 0.02, 0.02); // #050505
@@ -182,17 +189,26 @@ export default function NeuralNoise({
         vec3 col = bgCol;
         
         // Add glowing web
-        col = mix(col, accentCol, pattern * mix(0.5, 1.0, uIntensity + uUserGlow));
+        ${variant === 'orb' 
+          ? 'col = mix(col, accentCol, pattern * mix(0.5, 1.0, uIntensity + uUserGlow));' 
+          : 'col = mix(col, accentCol, pattern * mix(0.2, 0.4, uIntensity + uUserGlow));'
+        }
         
-        // Core intersections get hot white highlights
+        // Core intersections get hot white highlights (only for orb, background stays dim)
+        ${variant === 'orb' ? `
         float hotNodes = pow(pattern, 3.0);
         col = mix(col, highlightCol, hotNodes * mix(0.3, 0.8, uIntensity + uUserGlow));
+        ` : ''}
 
-        // Fade out to black at the edges
+        // Fade out to black at the edges (for orb)
         col *= mask;
         
         // Base opacity is subtle, gets stronger with activity
-        float alpha = mask * mix(0.6, 0.95, max(uIntensity, uUserGlow));
+        // Background variant is drastically reduced to be barely perceptible (5-10% intensity)
+        ${variant === 'orb' 
+          ? 'float alpha = mask * mix(0.6, 0.95, max(uIntensity, uUserGlow));' 
+          : 'float alpha = mix(0.04, 0.1, max(uIntensity, uUserGlow));'
+        }
 
         gl_FragColor = vec4(col, alpha);
       }
@@ -236,13 +252,22 @@ export default function NeuralNoise({
     const timeLocation = gl.getUniformLocation(program, 'uTime');
     const intensityLocation = gl.getUniformLocation(program, 'uIntensity');
     const userGlowLocation = gl.getUniformLocation(program, 'uUserGlow');
+    const resolutionLocation = gl.getUniformLocation(program, 'uResolution');
 
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+      
+      // Optimize background canvas resolution to keep it lightweight
+      // (scale down resolution for full screen since it's just a blurry/ambient background)
+      const resolutionScale = variant === 'background' ? 0.5 : 1.0; 
+      
+      canvas.width = rect.width * dpr * resolutionScale;
+      canvas.height = rect.height * dpr * resolutionScale;
       gl.viewport(0, 0, canvas.width, canvas.height);
+      
+      gl.useProgram(program);
+      gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
     };
     window.addEventListener('resize', resize);
     resize();
@@ -263,7 +288,9 @@ export default function NeuralNoise({
       s.userGlow += (s.targetUserGlow - s.userGlow) * 0.05;
 
       // Advance time based on current dynamic speed
-      accumulatedTime += dt * s.speed;
+      // Background variant moves at a nearly imperceptible speed
+      const speedMultiplier = variant === 'background' ? 0.05 : 1.0;
+      accumulatedTime += dt * s.speed * speedMultiplier;
       
       gl.useProgram(program);
       gl.uniform1f(timeLocation, accumulatedTime);
